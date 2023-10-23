@@ -12,13 +12,13 @@ namespace PowerCards.Models
         [Key, Column(Order = 1)]
         public int CardID { get; set; }
 
-        public string Question { get; set; }
+        public string? Question { get; set; }
 
-        public string Answer { get; set; }
+        public string? Answer { get; set; }
 
-        public string Hint { get; set; }
+        public string? Hint { get; set; }
 
-        public virtual Deck Deck { get; set; }
+        public virtual Deck? Deck { get; set; }
     }
 
 }

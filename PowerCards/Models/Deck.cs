@@ -12,17 +12,17 @@ namespace PowerCards.Models
 
         [MaxLength(50)]
         [ForeignKey("User")]
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public Subject Subject { get; set; }
+        public Subject? Subject { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 
 }
