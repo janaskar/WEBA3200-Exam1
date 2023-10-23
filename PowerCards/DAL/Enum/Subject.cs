@@ -1,6 +1,13 @@
 ﻿namespace PowerCards.DAL.Enum
 {
-    public class Subject
+    public enum Subject
     {
+        Math,
+        Science,
+        Physics,
+        Coding,
+        Language,
+        History,
+        Other
     }
 }
