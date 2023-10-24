@@ -18,8 +18,7 @@ namespace PowerCards.Models
         public string? Description { get; set; }
         public Subject? Subject { get; set; }
         public virtual User? User { get; set; }
-        public ICollection<Card>? Cards { get; set; }
-        public ICollection<Favorite>? Favorites { get; set; }
+        public virtual List<Card>? Cards { get; set; }
+        public virtual List<Favorite>? Favorites { get; set; }
     }
-
 }

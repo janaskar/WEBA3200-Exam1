@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using PowerCards.DAL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration["ConnectionStrings:AppDbContextConnection"]);
+});
 
 var app = builder.Build();
 

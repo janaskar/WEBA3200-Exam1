@@ -8,7 +8,7 @@ namespace PowerCards.Models
         [Required]
         [MaxLength(50)]
         public string Username { get; set; } = string.Empty;
-        public ICollection<Deck>? Decks { get; set; }
-        public ICollection<Favorite>? Favorites { get; set;}
+        public virtual List<Deck>? Decks { get; set; }
+        public virtual List<Favorite>? Favorites { get; set;}
     }
 }
