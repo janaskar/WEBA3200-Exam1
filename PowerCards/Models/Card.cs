@@ -9,6 +9,7 @@ namespace PowerCards.Models
         [ForeignKey("Deck")]
         public int DeckID { get; set; }
         [Key, Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CardID { get; set; }
         public string? Question { get; set; }
         public string? Answer { get; set; }
