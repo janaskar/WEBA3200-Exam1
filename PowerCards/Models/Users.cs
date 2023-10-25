@@ -1,14 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace PowerCards.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        [Key]
-        [Required]
-        [MaxLength(50)]
-        public string Username { get; set; } = string.Empty;
-        public ICollection<Deck>? Decks { get; set; }
-        public ICollection<Favorite>? Favorites { get; set;}
+        public virtual List<Deck>? Decks { get; set; }
+        public virtual List<Favorite>? Favorites { get; set; }
     }
 }

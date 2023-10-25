@@ -7,7 +7,7 @@ namespace PowerCards.Models
     {
         [Key, Column(Order = 0)]
         [ForeignKey("User")]
-        public string? Username { get; set; }
+        public string? UserName { get; set; }
         [Key, Column(Order = 1)]
         [ForeignKey("Deck")]
         public int DeckID { get; set; }
