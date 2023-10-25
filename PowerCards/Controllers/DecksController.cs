@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
+using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {
@@ -29,20 +30,27 @@ namespace PowerCards.Controllers
         // GET: Decks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Decks == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var deck = await _context.Decks
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.DeckID == id);
+                                     .Include(d => d.Cards)
+                                     .FirstOrDefaultAsync(d => d.DeckID == id);
+
             if (deck == null)
             {
                 return NotFound();
             }
 
-            return View(deck);
+            var viewModel = new DeckViewModel
+            {
+                Deck = deck,
+                Card = new Card() { DeckID = deck.DeckID }
+            };
+
+            return View(viewModel);
         }
 
         // GET: Decks/Create
@@ -164,5 +172,6 @@ namespace PowerCards.Controllers
         {
           return (_context.Decks?.Any(e => e.DeckID == id)).GetValueOrDefault();
         }
+     
     }
 }

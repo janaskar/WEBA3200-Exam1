@@ -36,7 +36,7 @@ namespace PowerCards.Controllers
 
             var card = await _context.Cards
                 .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.DeckID == id);
+                .FirstOrDefaultAsync(m => m.CardID == id);
             if (card == null)
             {
                 return NotFound();
@@ -48,6 +48,7 @@ namespace PowerCards.Controllers
         // GET: Cards/Create
         public IActionResult Create()
         {
+
             ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title");
             return View();
         }
@@ -57,7 +58,7 @@ namespace PowerCards.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeckID,CardID,Question,Answer,Hint")] Card card)
+        public async Task<IActionResult> Create([Bind("DeckID,Question,Answer")] Card card)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +94,7 @@ namespace PowerCards.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,CardID,Question,Answer,Hint")] Card card)
         {
-            if (id != card.DeckID)
+            if (id != card.CardID)
             {
                 return NotFound();
             }
@@ -107,7 +108,7 @@ namespace PowerCards.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CardExists(card.DeckID))
+                    if (!CardExists(card.CardID))
                     {
                         return NotFound();
                     }
@@ -132,7 +133,7 @@ namespace PowerCards.Controllers
 
             var card = await _context.Cards
                 .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.DeckID == id);
+                .FirstOrDefaultAsync(m => m.CardID == id);
             if (card == null)
             {
                 return NotFound();
@@ -155,14 +156,14 @@ namespace PowerCards.Controllers
             {
                 _context.Cards.Remove(card);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CardExists(int id)
         {
-          return (_context.Cards?.Any(e => e.DeckID == id)).GetValueOrDefault();
+            return (_context.Cards?.Any(e => e.CardID == id)).GetValueOrDefault();
         }
     }
 }
