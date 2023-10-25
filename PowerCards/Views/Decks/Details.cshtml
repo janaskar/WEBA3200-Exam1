@@ -1,6 +1,4 @@
-﻿
-@model PowerCards.ViewModels.DeckViewModel
-
+﻿@model PowerCards.ViewModels.DeckViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -10,7 +8,7 @@
 <span>
     <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
 </span>
-<!-- Cards Display Start--> 
+
 <div class="mt-4">
     <div class="card-header">
         Cards in this Deck
@@ -21,6 +19,7 @@
             foreach (var card in Model.Deck.Cards)
             {
                 <div class="row mb-4">
+                    <!-- Question Card -->
                     <div class="col-md-5">
                         <div class="card">
                             <div class="card-body">
@@ -29,6 +28,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Answer Card -->
                     <div class="col-md-5">
                         <div class="card">
                             <div class="card-body hidden-answer">
@@ -39,17 +40,20 @@
                         </div>
                     </div>
 
+                    <!-- Edit & Delete Actions -->
                     <div class="col-md-2 d-flex align-items-center">
                         <div class="d-flex justify-content-between w-100">
                             <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary">Edit</a>
                             <a asp-controller="Cards" asp-action="Delete" asp-route-id="@card.CardID" class="btn btn-danger">Delete</a>
                         </div>
                     </div>
+
                 </div>
             }
         }
         else
         {
+            <!-- Display a message if no cards are available for this deck -->
             <p>No cards available for this deck.</p>
         }
     </div>
