@@ -6,37 +6,47 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div class="card">
-    <div class="card-header">
-        Deck Details
-    </div>
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Deck.Title)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Deck.Title)
-            </dd>
-        </dl>
-    </div>
-</div>
-
-<div class="card mt-4">
+<h1>@Html.DisplayFor(model => model.Deck.Title)</h1>
+<span>
+    <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+</span>
+<!-- Cards Display Start--> 
+<div class="mt-4">
     <div class="card-header">
         Cards in this Deck
     </div>
     <div class="card-body">
         @if (Model.Deck.Cards != null && Model.Deck.Cards.Any())
         {
-            <ul>
-                @foreach (var card in Model.Deck.Cards)
-                {
-                    <li>@card.Question - @card.Answer</li>
-                }
-            </ul>
+            foreach (var card in Model.Deck.Cards)
+            {
+                <div class="row mb-4">
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Question</h5>
+                                <p class="card-text">@card.Question</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body hidden-answer">
+                                <h5 class="card-title">Answer</h5>
+                                <p class="card-text">@card.Answer</p>
+                            </div>
+                            <button class="toggle-answer-btn">Show Answer</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-center">
+                        <div class="d-flex justify-content-between w-100">
+                            <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary">Edit</a>
+                            <a asp-controller="Cards" asp-action="Delete" asp-route-id="@card.CardID" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
         }
         else
         {
@@ -44,40 +54,27 @@
         }
     </div>
 </div>
+<!-- Cards Display end-->
 
 <!-- Begin Card Creation Form -->
 <div class="card mt-4">
     <div class="card-header">
-        Create a Card for this Deck
+        Add a New Card
     </div>
     <div class="card-body">
-        <form asp-action="Create" asp-controller="Cards" method="post">
-            <input type="hidden" value="@Model.Deck.DeckID" name="DeckID" />
-
-            <!-- Card Question Input -->
+        <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
+            <input type="hidden" asp-for="Card.DeckID" />
             <div class="form-group">
                 <label asp-for="Card.Question">Question</label>
-                <input asp-for="Card.Question" class="form-control" placeholder="Enter the question..." />
-                <span asp-validation-for="Card.Question" class="text-danger"></span>
+                <input asp-for="Card.Question" class="form-control" />
             </div>
-
-            <!-- Card Answer Input -->
             <div class="form-group">
                 <label asp-for="Card.Answer">Answer</label>
-                <input asp-for="Card.Answer" class="form-control" placeholder="Enter the answer..." />
-                <span asp-validation-for="Card.Answer" class="text-danger"></span>
+                <input asp-for="Card.Answer" class="form-control" />
             </div>
-
-            <!-- Other card properties can be added similarly -->
-
             <button type="submit" class="btn btn-primary">Add Card</button>
         </form>
-        @section Scripts {
-            @{
-                await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            }
-        }
-
     </div>
 </div>
 <!-- End Card Creation Form -->
+<a asp-action="Index" class="btn btn-success">Back to List</a>

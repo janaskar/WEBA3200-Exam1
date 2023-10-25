@@ -117,7 +117,8 @@ namespace PowerCards.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                // Redirecting to the Details action of the DecksController after editing
+                return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
             ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
@@ -152,18 +153,38 @@ namespace PowerCards.Controllers
                 return Problem("Entity set 'AppDbContext.Cards'  is null.");
             }
             var card = await _context.Cards.FindAsync(id);
+            int? deckId = card?.DeckID;
             if (card != null)
             {
                 _context.Cards.Remove(card);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            if (deckId.HasValue)
+            {
+                // Redirecting to the Details action of the DecksController after deletion
+                return RedirectToAction("Details", "Decks", new { id = deckId });
+            }
             return RedirectToAction(nameof(Index));
         }
 
         private bool CardExists(int id)
         {
             return (_context.Cards?.Any(e => e.CardID == id)).GetValueOrDefault();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromDeckDetails([Bind("DeckID,Question,Answer")] Card card)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(card);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+            }
+            // If there's a validation error, you might want to return the user back to the deck details page with an error message
+            // For this example, I'm just redirecting back to the deck details.
+            return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }
     }
 }
