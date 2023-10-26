@@ -43,9 +43,9 @@
                 @Html.DisplayFor(modelItem => item.Deck.Title)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.CardID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CardID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CardID">Delete</a>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
+using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {
@@ -29,26 +30,33 @@ namespace PowerCards.Controllers
         // GET: Decks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Decks == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var deck = await _context.Decks
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.DeckID == id);
+                                     .Include(d => d.Cards)
+                                     .FirstOrDefaultAsync(d => d.DeckID == id);
+
             if (deck == null)
             {
                 return NotFound();
             }
 
-            return View(deck);
+            var viewModel = new DeckViewModel
+            {
+                Deck = deck,
+                Card = new Card() { DeckID = deck.DeckID }
+            };
+
+            return View(viewModel);
         }
 
         // GET: Decks/Create
         public IActionResult Create()
         {
-            ViewData["UserName"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username");
             return View();
         }
 
@@ -57,7 +65,7 @@ namespace PowerCards.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Create([Bind("DeckID,Username,Title,Description,Subject")] Deck deck)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +73,7 @@ namespace PowerCards.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "Id", "Id", deck.UserName);
+            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
             return View(deck);
         }
 
@@ -82,7 +90,7 @@ namespace PowerCards.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "Id", "Id", deck.UserName);
+            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
             return View(deck);
         }
 
@@ -91,7 +99,7 @@ namespace PowerCards.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Edit(int id, [Bind("DeckID,Username,Title,Description,Subject")] Deck deck)
         {
             if (id != deck.DeckID)
             {
@@ -118,7 +126,7 @@ namespace PowerCards.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "Id", "Id", deck.UserName);
+            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
             return View(deck);
         }
 
@@ -164,5 +172,6 @@ namespace PowerCards.Controllers
         {
           return (_context.Decks?.Any(e => e.DeckID == id)).GetValueOrDefault();
         }
+     
     }
 }
