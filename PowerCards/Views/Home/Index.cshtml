@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<section id="home">
+<section id="home" class="bg-dark text-white">
     <div class="container-fluid p-0">
         <div class="row mx-0">
             <div class="col p-0">
@@ -12,23 +12,23 @@
                         <button type="button" data-bs-target="#carouselImages" data-bs-slide-to="1" aria-label="Slide 2"></button>
                         <button type="button" data-bs-target="#carouselImages" data-bs-slide-to="2" aria-label="Slide 0"></button>
                     </div>
-                    <div class="carousel-inner text-dark">
+                    <div class="carousel-inner">
                         <div class="carousel-item active">
 
-                            <img src="~/image/carousel_3.jpg" class="d-block w-100 img-fluid" alt="Person sittig">
+                            <img src="~/image/caroimg3.jpg.jpg" class="d-block w-100 img-fluid" alt="Person sittig">
 
                             <div class="overlay position-absolute top-50 start-50 translate-middle">
-                                <h1 class="display-2 bold-text">Welcome to QuizMaster </h1>
+                                <h1 class="display-2 bold-text">Welcome to PowerCards </h1>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="~/image/carousel_1.jpg" class="d-block w-100 img-fluid" alt="Fried Chicken Leg">
+                            <img src="~/image/caroimg1.jpg.jpg" class="d-block w-100 img-fluid" alt="Fried Chicken Leg">
                             <div class="overlay position-absolute top-50 start-50 translate-middle">
                                 <h1 class="display-2 bold-text">We provide tools</h1>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="~/image/carousel_2.jpg" class="d-block w-100 img-fluid" alt="Tacos">
+                            <img src="~/image/caroimg2.jpg.jpg" class="d-block w-100 img-fluid" alt="Tacos">
                             <div class="overlay position-absolute top-50 start-50 translate-middle">
                                 <h1 class="display-2 bold-text">to help you reach your goal!</h1>
                             </div>
@@ -46,23 +46,23 @@
             </div>
         </div>
     </div>
-</section>
-<section pt-5 pb-5 mt-5 style="min-height: 100px;">
-    <div class="container">
-        <div class="row">
-            <div class="col p-1 d-flex flex-column align-items-center justify-content-center">
-                <h1 class="pb-1 display-3 bold-text">Create flashcards</h1>
-                <p class="text-break p-1" style="font-size: 1rem; font-family:Arial, Helvetica, sans-serif;" >
-                QuizMaster is here to help you achieve your goals flashcards by flashcards. Why not try creating your own flashcard?
-                By clicking on "Create New Set" you can create your very own flashcard all you need is the term and definition.
-                Create multiple sets. 
-                </p>
-                <a href="/_LoginPartial.cshtml" class="btn btn-primary display-4 bold-text">Create new set</a>
+    <section pt-5 pb-5 mt-5 style="min-height: 100px;">
+        <div class="container">
+            <div class="row">
+                <div class="col p-1 d-flex flex-column align-items-center justify-content-center">
+                    <h1 class="pb-1 display-3 bold-text">Create flashcards</h1>
+                    <p class="text-break p-1" style="font-size: 1rem; font-family:Arial, Helvetica, sans-serif;">
+                       PowerCards is here to help you achieve your goals flashcards by flashcards. Why not try creating your own flashcard?
+                        By clicking on "Create New Flashcard" you can create your very own flashcard all you need is the term and definition.
+                        Create multiple sets.
+                    </p>
+                    <a class="nav-link text-dark btn btn-primary" asp-area="" asp-controller="Decks" asp-action="Index">Create New Flashcard</a>
+                </div>
+                <div class="col p-1 d-flex flex-column align-items-center justify-content-center">
+                    <img src="~/image/flashcard.jpg" class="mx-auto d-block img-fluid p-3" alt="A photo of a flashcard" style="height: 70%">
+                </div>
+
             </div>
-            <div class="col p-1 d-flex flex-column align-items-center justify-content-center">
-                <img src="~/image/flashcard.jpg" class="mx-auto d-block img-fluid p-3" alt="A photo of a flashcard" style="height: 70%">
-            </div>
-            
         </div>
-    </div>
+    </section>
 </section>

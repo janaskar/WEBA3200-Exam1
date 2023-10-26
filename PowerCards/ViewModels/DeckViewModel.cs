@@ -1,7 +1,5 @@
 ﻿using PowerCards.Models;
 
-
-
 namespace PowerCards.ViewModels
 {
     public class DeckViewModel
