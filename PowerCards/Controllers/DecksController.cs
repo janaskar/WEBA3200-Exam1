@@ -56,7 +56,7 @@ namespace PowerCards.Controllers
         // GET: Decks/Create
         public IActionResult Create()
         {
-            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username");
+            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace PowerCards.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeckID,Username,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Create([Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace PowerCards.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
+            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
@@ -90,7 +90,7 @@ namespace PowerCards.Controllers
             {
                 return NotFound();
             }
-            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
+            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
@@ -99,7 +99,7 @@ namespace PowerCards.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DeckID,Username,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Edit(int id, [Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
         {
             if (id != deck.DeckID)
             {
@@ -126,7 +126,7 @@ namespace PowerCards.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Username"] = new SelectList(_context.Users, "Username", "Username", deck.Username);
+            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
