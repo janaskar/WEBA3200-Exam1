@@ -45,9 +45,9 @@ namespace PowerCards.Controllers
         }
 
         // GET: Render the card creation view
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title");
             return View();
         }
 
@@ -62,11 +62,11 @@ namespace PowerCards.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
         }
 
         // GET: Render the edit view for a card
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Cards == null)
@@ -77,7 +77,6 @@ namespace PowerCards.Controllers
             if (card == null)
                 return NotFound();
 
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
         }
 
@@ -105,11 +104,11 @@ namespace PowerCards.Controllers
                 }
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
         }
 
         // GET: Confirm deletion of a card
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Cards == null)
