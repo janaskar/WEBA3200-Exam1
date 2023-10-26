@@ -3,7 +3,7 @@
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
 <ul class="d-flex mb-0 list-unstyled nav-pills flex-row">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.MyDecksNavClass(ViewContext)" id="profile" asp-page="./MyDecks">My Decks</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.ChangeFavouritesNavClass(ViewContext)" id="Favourites" asp-page="./Favourites">Favourites</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
 </ul>
