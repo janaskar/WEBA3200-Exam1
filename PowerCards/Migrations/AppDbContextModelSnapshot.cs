@@ -192,7 +192,6 @@ namespace PowerCards.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("DeckID");
@@ -221,7 +220,8 @@ namespace PowerCards.Migrations
 
             modelBuilder.Entity("PowerCards.Models.User", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("AccessFailedCount")
@@ -237,6 +237,9 @@ namespace PowerCards.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -267,11 +270,7 @@ namespace PowerCards.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserName");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
