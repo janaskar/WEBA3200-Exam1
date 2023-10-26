@@ -9,17 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Card\**" />
-    <Compile Remove="Views\Deck\**" />
-    <Content Remove="Views\Card\**" />
-    <Content Remove="Views\Deck\**" />
-    <EmbeddedResource Remove="Views\Card\**" />
-    <EmbeddedResource Remove="Views\Deck\**" />
-    <None Remove="Views\Card\**" />
-    <None Remove="Views\Deck\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.24" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.24" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.13">

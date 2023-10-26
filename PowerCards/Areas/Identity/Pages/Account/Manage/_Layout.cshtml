@@ -1,0 +1,29 @@
+﻿@inject UserManager<User> UserManager
+@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+<h1>@UserManager.GetUserName(User)</h1>
+
+<div>
+    <div class="row">
+        <partial name="_ManageNav" />
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
