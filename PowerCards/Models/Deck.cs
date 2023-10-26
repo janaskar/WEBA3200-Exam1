@@ -9,7 +9,6 @@ namespace PowerCards.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DeckID { get; set; }
-        [MaxLength(50)]
         [ForeignKey("User")]
         public string? UserName { get; set; }
         [Required]

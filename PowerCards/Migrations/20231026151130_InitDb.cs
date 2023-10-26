@@ -29,8 +29,8 @@ namespace PowerCards.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -47,7 +47,7 @@ namespace PowerCards.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.UserName);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,7 +88,7 @@ namespace PowerCards.Migrations
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserName",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -108,7 +108,7 @@ namespace PowerCards.Migrations
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserName",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -132,7 +132,7 @@ namespace PowerCards.Migrations
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserName",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -152,7 +152,7 @@ namespace PowerCards.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserName",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -162,7 +162,7 @@ namespace PowerCards.Migrations
                 {
                     DeckID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    UserName = table.Column<string>(type: "TEXT", nullable: true),
                     Title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Subject = table.Column<int>(type: "INTEGER", nullable: true)
@@ -174,7 +174,7 @@ namespace PowerCards.Migrations
                         name: "FK_Decks_AspNetUsers_UserName",
                         column: x => x.UserName,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "UserName");
                 });
 
             migrationBuilder.CreateTable(
@@ -213,7 +213,7 @@ namespace PowerCards.Migrations
                         name: "FK_Favorites_AspNetUsers_UserName",
                         column: x => x.UserName,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserName",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Favorites_Decks_DeckID",
