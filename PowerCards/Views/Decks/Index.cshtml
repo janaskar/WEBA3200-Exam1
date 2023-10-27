@@ -1,69 +1,33 @@
 ﻿@model IEnumerable<PowerCards.Models.Deck>
-@inject UserManager<User> UserManager
-@inject SignInManager<User> SignInManager
+
 @{
     ViewData["Title"] = "Index";
 }
-@if (SignInManager.IsSignedIn(User))
-{
-    <section class="p-5">
-        <div>
-            <h1 class="text-center">FLASHCARDS:</h1>
-            <a asp-action="Create" class="btn btn-primary mb-4">Create New Deck</a>
-        </div>
-        <div class="row">
-            @foreach (var deck in Model)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4" style="min-height: 150px;">
-                        <div class="card-header bg-dark text-white">
-                            <h5>@deck.Title</h5>
-                            <small class="text-muted">@deck.Subject</small>
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-2 text-truncate"><span class="fw-bold">Description:</span> @deck.Description</p>
-                        </div>
 
-                        <div class="d-flex justify-content-between m-3">
-                            <a asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-info text-white">View</a>
-                            <a asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger">Delete Deck</a>
-                        </div>
-
+<section class="p-5">
+    <div>
+        <h1 class="text-center">FLASHCARDS:</h1>
+        <a asp-action="Create" class="btn btn-primary mb-4">Create New Flashcard</a>
+    </div>
+    <div class="row">
+        @foreach (var deck in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 carddeck" >
+                    <div class="card-header bg-dark text-white">
+                        <h5>@deck.Title</h5>
+                        <small class="text-muted">@deck.UserName</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span> @deck.Description</p>
+                    </div>
+                    <div class="d-flex justify-content-between m-3">
+                        <a asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-info text-white">View</a>
+                        <p class="text-muted mb-0 d-flex flex-column justify-content-center">@deck.Subject</p>
                     </div>
                 </div>
-            }
-        </div>
-    </section>
-}
-else
-{
-   <section class="p-5">
-        <div>
-            <h1 class="text-center">FLASHCARDS:</h1>
-            <a class="nav-link text-dark btn btn-primary" id="login" asp-area="Identity" asp-page="/Account/Login">Create New Deck</a>
-        </div>
-        <div class="row">
-            @foreach (var deck in Model)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4" style="min-height: 150px;">
-                        <div class="card-header bg-dark text-white">
-                            <h5>@deck.Title</h5>
-                            <small class="text-muted">@deck.Subject</small>
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-2 text-truncate"><span class="fw-bold">Description:</span> @deck.Description</p>
-                        </div>
-
-                        <div class="d-flex justify-content-between m-3">
-                            <a asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-info text-white">View</a>
-                            <a asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger">Delete Deck</a>
-                        </div>
-
-                    </div>
-                </div>
-            }
-        </div>
-    </section>
-}
+            </div>
+        }
+    </div>
+</section>
 

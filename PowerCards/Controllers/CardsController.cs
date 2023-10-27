@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
+using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {
@@ -21,52 +22,15 @@ namespace PowerCards.Controllers
             _context = context;
         }
 
-        // GET: Display all cards
-        public async Task<IActionResult> Index()
+        public IActionResult DeckDetails(Card card)
         {
-            var appDbContext = _context.Cards.Include(c => c.Deck);
-            return View(await appDbContext.ToListAsync());
+            int deckId = card.DeckID;
+
+            return RedirectToAction("Details", "Decks", new { id = deckId });
         }
 
-        // GET: Display details of a specific card
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Cards == null)
-                return NotFound();
-
-            var card = await _context.Cards
-                .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.CardID == id);
-
-            if (card == null)
-                return NotFound();
-
-            return View(card);
-        }
-
-        // GET: Render the card creation view
-        public IActionResult Create()
-        {
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title");
-            return View();
-        }
-
-        // POST: Handle card creation
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeckID,Question,Answer")] Card card)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(card);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
-            return View(card);
-        }
-
-        // GET: Render the edit view for a card
+        // GET: Card Edit
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Cards == null)
@@ -77,11 +41,10 @@ namespace PowerCards.Controllers
             if (card == null)
                 return NotFound();
 
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
         }
 
-        // POST: Handle edits to a card
+        // POST: Card Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,CardID,Question,Answer,Hint")] Card card)
@@ -105,27 +68,10 @@ namespace PowerCards.Controllers
                 }
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", card.DeckID);
             return View(card);
         }
 
-        // GET: Confirm deletion of a card
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Cards == null)
-                return NotFound();
-
-            var card = await _context.Cards
-                .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.CardID == id);
-
-            if (card == null)
-                return NotFound();
-
-            return View(card);
-        }
-
-        // POST: Handle confirmed deletion of a card
+        // POST: Card Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -147,13 +93,7 @@ namespace PowerCards.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Utility method to check if a card exists in the database
-        private bool CardExists(int id)
-        {
-            return (_context.Cards?.Any(e => e.CardID == id)).GetValueOrDefault();
-        }
-
-        // POST: Create card from deck details view
+        // POST: Card Create from Deck details view
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFromDeckDetails([Bind("DeckID,Question,Answer")] Card card)
@@ -165,6 +105,12 @@ namespace PowerCards.Controllers
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
             return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+        }
+
+        // Utility method to check if a card exists in the database
+        private bool CardExists(int id)
+        {
+            return (_context.Cards?.Any(e => e.CardID == id)).GetValueOrDefault();
         }
     }
 }

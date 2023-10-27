@@ -13,21 +13,23 @@ namespace PowerCards.Controllers
 {
     public class DecksController : Controller
     {
+        // Dependency injection of the database context
         private readonly AppDbContext _context;
 
+        // Constructor to initialize context
         public DecksController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Decks
+        // GET: Decks Index
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Decks.Include(d => d.User);
             return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Decks/Details/5
+        // GET: Decks Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,8 +38,8 @@ namespace PowerCards.Controllers
             }
 
             var deck = await _context.Decks
-                                     .Include(d => d.Cards)
-                                     .FirstOrDefaultAsync(d => d.DeckID == id);
+                .Include(d => d.Cards)
+                .FirstOrDefaultAsync(d => d.DeckID == id);
 
             if (deck == null)
             {
@@ -53,16 +55,14 @@ namespace PowerCards.Controllers
             return View(viewModel);
         }
 
-        // GET: Decks/Create
+        // GET: Decks Create
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName");
             return View();
         }
 
-        // POST: Decks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Decks Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
@@ -73,11 +73,11 @@ namespace PowerCards.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
-        // GET: Decks/Edit/5
+        // GET: Decks Edit
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Decks == null)
@@ -90,13 +90,10 @@ namespace PowerCards.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
-        // POST: Decks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Decks Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
@@ -126,11 +123,11 @@ namespace PowerCards.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", deck.UserName);
             return View(deck);
         }
 
-        // GET: Decks/Delete/5
+        // GET: Decks Delete
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Decks == null)
@@ -149,7 +146,7 @@ namespace PowerCards.Controllers
             return View(deck);
         }
 
-        // POST: Decks/Delete/5
+        // POST: Decks Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -168,6 +165,7 @@ namespace PowerCards.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Utility method to check if a dard exists in the database
         private bool DeckExists(int id)
         {
           return (_context.Decks?.Any(e => e.DeckID == id)).GetValueOrDefault();
