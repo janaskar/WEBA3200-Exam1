@@ -6,5 +6,6 @@ namespace PowerCards.ViewModels
     {
         public Deck Deck { get; set; } = new Deck();
         public Card Card { get; set; } = new Card();
+        public Favorite Favorite { get; set; } = new Favorite();
     }
 }

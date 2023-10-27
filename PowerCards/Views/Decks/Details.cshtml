@@ -1,13 +1,36 @@
 ﻿@model PowerCards.ViewModels.DeckViewModel
-
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
 @{
     ViewData["Title"] = "Details";
+}
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
+{
+    <div class="d-flex justify-content-end">
+        <a asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary">Edit</a>
+    </div>
 }
 <section class="p-5">
     <div class="p-2">
         <h1>@Html.DisplayFor(model => model.Deck.Title)</h1>
         <small>@Html.DisplayFor(model => model.Deck.Description)</small>
-        <small>Username: @Html.DisplayFor(model => model.Deck.UserName)</small>
+        <h6>Created by: @Html.DisplayFor(model => model.Deck.UserName)</h6> 
+    </div>
+    <div>
+        <!--Add to favorites user-->
+        @if (SignInManager.IsSignedIn(User))
+        {
+        <form asp-action="AddToFavorites" asp-controller="Favorites" method="post">
+            <input type="hidden" name="UserName" value="@UserManager.GetUserId(User)" />
+            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
+            <button type="submit" class="btn btn-primary">Add to Favorites</button>
+        </form>
+        }
+
+  
+
+         
+       
     </div>
 
 
@@ -41,15 +64,27 @@
                                 <button class="toggle-answer-btn">Show Answer</button>
                             </div>
                         </div>
+                        <!-- only user who created the card can edit and delete-->
+                        @* @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
+                        {
+                *@
+                            <!-- Edit & Delete Actions -->
+                            <div class="col-md-2 align-items-center">
+                                <div class="w-100">
+                                    <div class="mb-2">
+                                        <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary w-100">
+                                            <i class="bi bi-pen">Edit</i>
+                                        </a>
 
-                        <!-- Edit & Delete Actions -->
-                        <div class="col-md-2 d-flex align-items-center">
-                            <div class="d-flex justify-content-between w-100">
-                                <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary"><i class="bi bi-pen">Edit</i></a>
-                                <a asp-controller="Cards" asp-action="Delete" asp-route-id="@card.CardID" class="btn btn-danger"><i class="bi bi-trash">Delete</i></a>
+                                    </div>
+                                    <div>
+                                        <a asp-controller="Cards" asp-action="Delete" asp-route-id="@card.CardID" class="btn btn-danger w-100">
+                                            <i class="bi bi-trash">Delete</i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
+                        @*}      *@
                     </div>
                 }
             }
@@ -61,29 +96,36 @@
         </div>
     </div>
     <!-- Cards Display end-->
-    <!-- Begin Card Creation Form -->
-    <div class="card mt-4">
-        <div class="card-header">
-            Add a New Card
+    <!-- Only Username who created the card can add cards-->
+        <!-- Begin Card Creation Form -->
+        <div class="card mt-4">
+            <div class="card-header">
+                Add a New Card
+            </div>
+            <div class="card-body">
+                <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
+                    <input type="hidden" asp-for="Card.DeckID" />
+                    <div class="form-group">
+                        <label asp-for="Card.Question">Question</label>
+                        <input asp-for="Card.Question" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Card.Answer">Answer</label>
+                        <input asp-for="Card.Answer" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Card</button>
+                </form>
+            </div>
         </div>
-        <div class="card-body">
-            <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
-                <input type="hidden" asp-for="Card.DeckID" />
-                <div class="form-group">
-                    <label asp-for="Card.Question">Question</label>
-                    <input asp-for="Card.Question" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label asp-for="Card.Answer">Answer</label>
-                    <input asp-for="Card.Answer" class="form-control" />
-                </div>
-                <button type="submit" class="btn btn-primary">Add Card</button>
-            </form>
-        </div>
-    </div>
+
     <!-- End Card Creation Form -->
+
+
     <div class="d-flex justify-content-between pt-3">
-        <a asp-action="Index" class="btn btn-success">Back to List</a>
-        <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+
+            <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+
     </div>
 </section>
+
+
