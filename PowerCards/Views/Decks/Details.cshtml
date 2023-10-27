@@ -1,5 +1,6 @@
 ﻿@model PowerCards.ViewModels.DeckViewModel
-
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
 @{
     ViewData["Title"] = "Details";
 }
@@ -55,16 +56,20 @@
                             </div>
                         </div>
 
-                        <!-- Edit & Delete Actions -->
-                        <div class="col-md-2 d-flex align-items-center">
-                            <div class="d-flex justify-content-between w-100">
-                                <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary"><i class="bi bi-pen">Edit</i></a>
-                                <form method="post" asp-controller="Cards" asp-action="Delete">
-                                    <input type="hidden" name="id" value="@card.CardID" />
-                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash">Delete</i></button>
-                                </form>
+                        <!-- Edit & Delete Actions if the user who created the deck is signed in -->
+                        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+                        {
+                            <div class="col-md-2 d-flex align-items-center">
+                                <div class="d-flex justify-content-between w-100">
+                                    <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary"><i class="bi bi-pen">Edit</i></a>
+                                    <form method="post" asp-controller="Cards" asp-action="Delete">
+                                        <input type="hidden" name="id" value="@card.CardID" />
+                                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash">Delete</i></button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        }
+
 
                     </div>
                 }
@@ -102,6 +107,9 @@
     <!-- End Card Creation Form -->
     <div class="d-flex justify-content-between pt-3">
         <a asp-action="Index" class="btn btn-success">Back to List</a>
-        <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+        {
+            <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+        }
     </div>
 </section>
