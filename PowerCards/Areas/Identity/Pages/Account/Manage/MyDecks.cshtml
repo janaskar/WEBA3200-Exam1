@@ -1,12 +1,11 @@
 ﻿@page
 @model MyDecksModel
-<section>
 @{
 
     ViewData["Title"] = "My Decks";
     ViewData["ActivePage"] = ManageNavPages.MyDecks;
 }
-    <div class="container">
+    <div class="container-fluid">
     <!--Post users data-->
     <div class="row">
         @if(Model.UserDecks.Count() == 0)
@@ -24,16 +23,17 @@
             <div class="col-md-12">
                 <h1 class="text-center">Your Decks</h1>
             </div>
-        })
+        }
         @foreach (var deck in Model.UserDecks)
         {
             <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
-                    <div class="card-body text-truncate">
-                        <h5 class="card-title">@deck.Title</h5>
-                        <p class="card-text">@deck.Description</p>
-
-                    </div>
+                        <div class="card- text-truncate">
+                            <h5 class="card-title">@deck.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-truncate">@deck.Description</p>
+                        </div>
                     <div class="card-footer">
                         <small class="text-muted">Subject: @deck.Subject</small>
                         <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn w-100">
@@ -52,7 +52,7 @@
         }
     </div>
     </div>
-</section>
+
     
 
 

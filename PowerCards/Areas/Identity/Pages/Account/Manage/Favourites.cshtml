@@ -1,59 +1,54 @@
 ﻿@page
 @model FavouritesModel
-<section>
-@{
-    ViewData["Title"] = "Favourites";
-    ViewData["ActivePage"] = ManageNavPages.Favourites;
-    ;
-}
-   
-<h3>@ViewData["Title"]</h3>
-<p>Your Favourite Decks</p>
-<!--User's favorites decks-->
-<div class="container-fluid">
-    <div class="row">
-    @if (Model.UserFavourites.Count() == 0)
-{
-    <div class="col-md-12">
-        <h1 class="text-center">You have no decks</h1>
-        <a class="nav-link text-dark" asp-area="" asp-controller="Decks" asp-action="Index">Decks</a>
-    </div>
-    <!--Create new deck-->
+    @{
+        ViewData["Title"] = "Favourites";
+        ViewData["ActivePage"] = ManageNavPages.Favourites;
+        ;
     }
-    else
-    {
-    <div class="col-md-12">
-        <h1 class="text-center">Your Decks</h1>
-    </div>
-    })
-    @foreach (var deck in Model.UserFavourites)
-    {
-    <div class="col-md-4">
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body text-truncate">
-                <h5 class="card-title">@deck.Title</h5>
-                <p class="card-text">@deck.Description</p>
 
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">Subject: @deck.Subject</small>
-                <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn w-100">
+         <h3>@ViewData["Title"]</h3>
+        <p>Your Favourite Decks</p>
+        <!--User's favorites decks-->
+    <div class="container-fluid">
+        <div class="row">
+            @if (Model.UserFavourites.Count() == 0)
+            {
+                <div class="col-md-12">
+                    <h1 class="text-center">You have no decks</h1>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Decks" asp-action="Index">DECKS</a>
+                </div>
+                <!--Create new deck-->
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <h1 class="text-center">Your Decks</h1>
+                </div>
+            }
+            @foreach (var deck in Model.UserFavourites)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm" style="min-height: 150px;">
+                        <div class="card-header text-truncate">
+                            <h5 class="card-title">@deck.Title</h5>
+                            </div>
+                            <div class="card-body">
+                            <p class="text-truncate">@deck.Description</p>
 
-                    <i i class="bi bi-view-list">View</i>
-                </a>
-                <a asp-controller="Decks" asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger w-100">
-                    <i class="bi bi-trash">Delete</i>"
-                </a>
-                <a asp-controller="Decks" asp-action="Edit" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
-                    <i class="bi bi-pencil-square">Edit</i>
-                </a>
-            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Subject: @deck.Subject</small>
+                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
+
+                                <i i class="bi bi-view-list">View</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
-}
-    </div>
-    </div>
-</section>
+
 
 
 
