@@ -1,15 +1,61 @@
 ﻿@page
+@model MyDecksModel
 @{
-    ViewData["Title"] = "Your Decks";
+
+    ViewData["Title"] = "My Decks";
     ViewData["ActivePage"] = ManageNavPages.MyDecks;
 }
-
-<h3>@ViewData["Title"]</h3>
-<div class="row">
-    <div class="col-md-6">
-        <p>Your Decks</p>
+    <div class="container-fluid">
+    <!--Post users data-->
+    <div class="row">
+        @if(Model.UserDecks.Count() == 0)
+        {
+            <div class="col-md-12">
+                <h1 class="text-center">You have no decks</h1>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Decks" asp-action="Index">Decks</a>
+            </div>
+            <!--Create new deck-->
+            
+            
+        }
+        else
+        {
+            <div class="col-md-12">
+                <h1 class="text-center">Your Decks</h1>
+            </div>
+        }
+        @foreach (var deck in Model.UserDecks)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                        <div class="card- text-truncate">
+                            <h5 class="card-title">@deck.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-truncate">@deck.Description</p>
+                        </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Subject: @deck.Subject</small>
+                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn w-100">
+                         
+                            <i i class="bi bi-view-list">View</i>
+                        </a>
+                        <a asp-controller="Decks" asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger w-100">
+                            <i class="bi bi-trash">Delete</i>"
+                        </a>
+                        <a asp-controller="Decks" asp-action="Edit" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
+                        <i class="bi bi-pencil-square">Edit</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-</div>
+    </div>
+
+    
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
