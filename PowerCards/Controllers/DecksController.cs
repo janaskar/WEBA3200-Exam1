@@ -121,7 +121,7 @@ namespace PowerCards.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+               return RedirectToAction("Details", "Decks", new { id = deck.DeckID });
             }
             return View(deck);
         }
