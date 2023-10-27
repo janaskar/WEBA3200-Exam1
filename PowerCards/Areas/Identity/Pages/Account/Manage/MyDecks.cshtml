@@ -1,12 +1,12 @@
 ﻿@page
 @model MyDecksModel
-
+<section>
 @{
 
     ViewData["Title"] = "My Decks";
     ViewData["ActivePage"] = ManageNavPages.MyDecks;
 }
-<section>
+    <div class="container">
     <!--Post users data-->
     <div class="row">
         @if(Model.UserDecks.Count() == 0)
@@ -36,17 +36,21 @@
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">Subject: @deck.Subject</small>
-                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
+                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn w-100">
                          
                             <i i class="bi bi-view-list">View</i>
                         </a>
                         <a asp-controller="Decks" asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger w-100">
                             <i class="bi bi-trash">Delete</i>"
-</a>
+                        </a>
+                        <a asp-controller="Decks" asp-action="Edit" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
+                        <i class="bi bi-pencil-square">Edit</i>
+                        </a>
                     </div>
                 </div>
             </div>
         }
+    </div>
     </div>
 </section>
     

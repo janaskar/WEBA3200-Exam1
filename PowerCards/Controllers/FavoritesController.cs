@@ -65,11 +65,11 @@ namespace PowerCards.Controllers
             {
                 _context.Add(favorite);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
             }
             ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", favorite.DeckID);
             ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", favorite.UserName);
-            return View(favorite);
+            return View();
         }
 
         // GET: Favorites/Edit/5
@@ -160,15 +160,18 @@ namespace PowerCards.Controllers
             if (favorite != null)
             {
                 _context.Favorites.Remove(favorite);
+                await _context.SaveChangesAsync();
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            
+           return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
         }
 
         private bool FavoriteExists(string id)
         {
           return (_context.Favorites?.Any(e => e.UserName == id)).GetValueOrDefault();
         }
+      
     }
 }

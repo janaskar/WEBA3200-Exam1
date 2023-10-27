@@ -16,23 +16,21 @@
         <small>@Html.DisplayFor(model => model.Deck.Description)</small>
         <h6>Created by: @Html.DisplayFor(model => model.Deck.UserName)</h6> 
     </div>
-    <div>
-        <!--Add to favorites user-->
-        @if (SignInManager.IsSignedIn(User))
-        {
-        <form asp-action="AddToFavorites" asp-controller="Favorites" method="post">
-            <input type="hidden" name="UserName" value="@UserManager.GetUserId(User)" />
-            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
-            <button type="submit" class="btn btn-primary">Add to Favorites</button>
+    <!-- Add to favorites-->
+    <div class="d-flex justify-content-end">
+     
+        <form method="post" asp-controller="Favorites" asp-action="Create">
+            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID"/>
+            <input type="hidden" name="UserName" value="@Model.Deck.UserName" />
+            <button type="submit" class="btn"><i class="bi bi-star">Favourite</i></button>
         </form>
-        }
-
+        <form method="post" asp-controller="Favorites" asp-action="Delete">
+            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
+            <input type="hidden" name="UserName" value="@Model.Deck.UserName" />
+            <button type="submit" class="btn"><i class="bi bi-star">Unfavourite</i></button>
+        </form>
   
-
-         
-       
     </div>
-
 
     <div class="mt-4">
         <div class="card-header">

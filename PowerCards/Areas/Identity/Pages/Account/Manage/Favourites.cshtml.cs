@@ -7,26 +7,27 @@ using PowerCards.Models;
 
 namespace PowerCards.Areas.Identity.Pages.Account.Manage
 {
-    public class MyFavouritesModel : PageModel
+    public class FavouritesModel : PageModel
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        public IList<Favorite> UserFavourites{ get; set; }
+        public IList<Deck> UserFavourites { get; set; }
 
-        public MyFavouritesModel(AppDbContext context, UserManager<User> userManager)
+        public FavouritesModel(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
+        //Get user favorites
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
-            UserFavourites = await _context.Favorites
-                .Include(f => f.Deck)
-                .Where(f => f.UserName == user.UserName)
-                .ToListAsync();
+            var userName = _userManager.GetUserName(User);
+            UserFavourites = await _context.Decks
+                          .Where(d => d.UserName == userName)
+                          .ToListAsync();
             return Page();
         }
+       
     }
 }
