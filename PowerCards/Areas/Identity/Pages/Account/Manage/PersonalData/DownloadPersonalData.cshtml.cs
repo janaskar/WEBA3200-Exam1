@@ -36,7 +36,8 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userName = _userManager.GetUserName(User);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");

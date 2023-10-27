@@ -1,3 +1,5 @@
+#nullable disable
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,7 +16,9 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public IList<Deck> UserFavourites { get; set; }
 
-        public FavouritesModel(AppDbContext context, UserManager<User> userManager)
+        public FavouritesModel(
+            AppDbContext context,
+            UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -28,6 +32,5 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
                           .ToListAsync();
             return Page();
         }
-       
     }
 }
