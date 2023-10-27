@@ -9,12 +9,6 @@ html {
 
 body {
     margin-bottom: 60px;
-    padding-top: 64px;
+    padding-top: 72px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-}
-
-@media only screen and (max-width: 768px) {
-    body {
-        padding-top: 42px;
-    }
 }

@@ -46,7 +46,10 @@
                         <div class="col-md-2 d-flex align-items-center">
                             <div class="d-flex justify-content-between w-100">
                                 <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary"><i class="bi bi-pen">Edit</i></a>
-                                <a asp-controller="Cards" asp-action="Delete" asp-route-id="@card.CardID" class="btn btn-danger"><i class="bi bi-trash">Delete</i></a>
+                                <form method="post" asp-controller="Cards" asp-action="Delete">
+                                    <input type="hidden" name="id" value="@card.CardID" />
+                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash">Delete</i></button>
+                                </form>
                             </div>
                         </div>
 
@@ -77,7 +80,9 @@
                     <label asp-for="Card.Answer">Answer</label>
                     <input asp-for="Card.Answer" class="form-control" />
                 </div>
-                <button type="submit" class="btn btn-primary">Add Card</button>
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">Add Card</button>
+                </div>
             </form>
         </div>
     </div>
