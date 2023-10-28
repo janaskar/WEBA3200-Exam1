@@ -6,39 +6,39 @@ namespace PowerCards.DAL
 {
     public class DeckRepository : IDeckRepository
     {
-        private readonly AppDbContext _context;
-        public DeckRepository(AppDbContext context)
+        private readonly AppDbContext _db;
+        public DeckRepository(AppDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         public async Task<IEnumerable<Deck>> GetAll()
         {
-            return await _context.Decks.ToListAsync();
+            return await _db.Decks.ToListAsync();
         }
         public async Task<Deck?> GetById(int id)
         {
-            return await _context.Decks.FindAsync(id);
+            return await _db.Decks.FindAsync(id);
         }
         public async Task Create(Deck deck)
         {
-            _context.Decks.Add(deck);
-            await _context.SaveChangesAsync();
+            _db.Decks.Add(deck);
+            await _db.SaveChangesAsync();
         }
         public async Task Edit(Deck deck)
         {
-            _context.Update(deck);
-            await _context.SaveChangesAsync();
+            _db.Update(deck);
+            await _db.SaveChangesAsync();
         }
         public async Task<bool> Delete(int id)
         {
-            var deck = await _context.Decks.FindAsync(id);
+            var deck = await _db.Decks.FindAsync(id);
             if (deck == null)
             {
                 return false;
             }
-            _context.Decks.Remove(deck);
-            await _context.SaveChangesAsync();
+            _db.Decks.Remove(deck);
+            await _db.SaveChangesAsync();
             return true;
         }
 
