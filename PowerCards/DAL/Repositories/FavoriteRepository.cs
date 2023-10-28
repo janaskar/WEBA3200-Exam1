@@ -3,7 +3,7 @@ using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
 namespace PowerCards.DAL.Repositories
 {
-    public class FavoriteRepository : IFavorite
+    public class FavoriteRepository : IFavoriteRepository
     {
         private readonly AppDbContext _db;
         public FavoriteRepository(AppDbContext db)

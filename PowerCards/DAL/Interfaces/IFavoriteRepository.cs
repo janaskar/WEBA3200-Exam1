@@ -1,7 +1,7 @@
 ﻿using PowerCards.Models;
 namespace PowerCards.DAL.Interfaces
 {
-    public interface IFavorite
+    public interface IFavoriteRepository
     {
         Task<IEnumerable<Favorite>> GetAll();
         Task<Favorite?> GetById(int id);
