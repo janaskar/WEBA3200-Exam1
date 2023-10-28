@@ -26,35 +26,10 @@
                 <h1 class="text-center">Your Decks</h1>
             </div>
         }
-        @foreach (var favorite in Model.UserFavorites)
-        {
-            <div class="col-md-4">
-                <div class="card mb-4 shadow-sm" style="min-height: 150px;">
-                    <div class="card-header text-truncate">
-                        <h5 class="card-title">@favorite.Deck.Title</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-truncate">@favorite.Deck.Description</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Subject: @favorite.Deck.Subject</small>
-                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@favorite.Deck.DeckID" class="btn btn-primary w-100">
-                            <i class="bi bi-view-list">View</i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
+   
 
-
-    </div>
 </div>
-
-
-
-
-
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

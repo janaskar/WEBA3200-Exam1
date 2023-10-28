@@ -11,15 +11,14 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 {
     public class FavouritesModel : PageModel
     {
+        //Get current user favorites
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        public IList<Deck> UserFavourites { get; set; }
+        public IList<Favorite> UserFavorites { get; set; }
+        public IList<Deck> Decks { get; set; }
 
-        public FavouritesModel
-        (
-            AppDbContext context,
-            UserManager<User> userManager)
+        public FavouritesModel(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -28,9 +27,11 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnGetAsync()
         {
             var userName = _userManager.GetUserName(User);
-            UserFavourites = await _context.Decks
-                          .Where(d => d.UserName == userName)
+            UserFavorites = await _context.Favorites
+                          .Where(f => f.UserName == userName)
+                          .Include(f => f.Deck)
                           .ToListAsync();
+
             return Page();
         }
     }
