@@ -18,20 +18,20 @@
             <h1 class="text-center">Your Favourites</h1>
         </div>
         <div class="row" style="--bs-gutter-x: 32px;">
-            @foreach (var Favorite in Model.UserFavorites)
+            @foreach (var favorite in Model.UserFavorites)
             {
                 <div class="col-md-4 p-3">
                     <div class="card mb-4 carddeck">
                         <div class="card-header bg-dark text-white">
-                            <h5>@Favorite.Deck?.Title</h5>
-                            <small class="text-muted">@Favorite.Deck?.Subject</small>
+                            <h5>@favorite.Deck.Title</h5>
+                            <small class="text-muted">@favorite.Deck.Subject</small>
                         </div>
                         <div class="card-body">
-                            <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span> @Favorite.Deck?.Description</p>
+                            <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span>@favorite.Deck.Description</p>
                         </div>
                         <div class="d-flex justify-content-between m-3">
-                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@Favorite.Deck?.DeckID" class="btn btn-outline-secondary">View</a>
-                            <p class="text-muted mb-0 d-flex flex-column justify-content-center">By: @Favorite.Deck?.User?.UserName</p>
+                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@favorite.Deck.DeckID" class="btn btn-outline-secondary">View</a>
+                            <p class="text-muted mb-0 d-flex flex-column justify-content-center">By: @favorite.Deck.UserName</p>
                         </div>
                     </div>
                 </div>
