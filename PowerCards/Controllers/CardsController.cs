@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
+using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
 using PowerCards.ViewModels;
 
@@ -13,94 +14,103 @@ namespace PowerCards.Controllers
 {
     public class CardsController : Controller
     {
-        // Dependency injection of the database context
-        private readonly AppDbContext _context;
+        // Dependency injection of the Card Repository
+        private readonly ICardRepository _cardRepository;
 
-        // Constructor to initialize context
-        public CardsController(AppDbContext context)
+        // Constructor to initialize repository
+        public CardsController(ICardRepository cardRepository)
         {
-            _context = context;
+            _cardRepository = cardRepository;
         }
 
         // GET: Go Back to Deck Details
         public IActionResult DeckDetails(Card card)
         {
+            // Retrieve the deck id from the card
             int deckId = card.DeckID;
+            // Redirect to the deck details view
             return RedirectToAction("Details", "Decks", new { id = deckId });
         }
 
         // GET: Card Edit
-        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Cards == null)
+            // Check if the id is null
+            if (id == null)
             {
+
                 return NotFound();
             }
-
-            var card = await _context.Cards.FindAsync(id);
+            // Retrieve the card to be edited
+            var card = await _cardRepository.GetById(id.Value);
+            // Check if the card exists
             if (card == null)
             {
+                // If the card does not exist, return not found
                 return NotFound();
             }
             return View(card);
         }
+
 
         // POST: Card Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,CardID,Question,Answer,Hint")] Card card)
-        {
+        {   
+            // Check if the id of the card to be edited matches the id of the card in the model
             if (id != card.CardID)
             {
                 return NotFound();
             }
-
+            // Check if the model state is valid
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(card);
-                    await _context.SaveChangesAsync();
+                    // Edit the card
+                    await _cardRepository.Edit(card);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!CardExists(card.CardID))
+                    // Check if the card exists
+                    if (!await _cardRepository.CardExists(card.CardID))
                         return NotFound();
+                    // If the card exists, throw the exception
                     else
                         throw;
                 }
+                // Redirect to the deck details view
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
             return View(card);
         }
+
+
 
         // POST: Card Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Cards == null)
+            // Retrieve the card to be deleted
+            var card = await _cardRepository.GetById(id);
+            if (card == null)
             {
-                return Problem("Entity set 'AppDbContext.Cards'  is null.");
+                
+                return NotFound();
             }
 
-            var card = await _context.Cards.FindAsync(id);
-            int? deckId = card?.DeckID;
-            if (card != null)
+            bool isDeleted = await _cardRepository.Delete(id);
+            if (!isDeleted)
             {
-                _context.Cards.Remove(card);
-                await _context.SaveChangesAsync();
+                
+                return NotFound();
             }
 
-            if (deckId.HasValue)
-            {
-                return RedirectToAction("Details", "Decks", new { id = deckId });
-            }
-
-            return RedirectToAction(nameof(Index));
+            // Use the previously retrieved card's DeckID for redirection
+            return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }
-
         // POST: Card Create from Deck details view
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -108,17 +118,21 @@ namespace PowerCards.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(card);
-                await _context.SaveChangesAsync();
+                // Create the card
+                await _cardRepository.Create(card);
+                // Redirect to the deck details view
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
+            // If the model state is not valid, return to the deck details view
             return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }
 
+
         // Utility method to check if a card exists in the database
-        private bool CardExists(int id)
+        private async Task<bool> CardExists(int id)
         {
-            return (_context.Cards?.Any(e => e.CardID == id)).GetValueOrDefault();
+            // Use the CardExists method from the Card Repository
+            return await _cardRepository.CardExists(id);
         }
     }
 }

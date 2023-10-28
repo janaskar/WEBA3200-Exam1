@@ -24,11 +24,6 @@ namespace PowerCards.DAL
             _db.Cards.Add(card);
             await _db.SaveChangesAsync();
         }
-        public async Task Details(Card card)
-        {
-            _db.Cards.Add(card);
-            await _db.SaveChangesAsync();
-        }
         public async Task<bool> Delete(int id)
         {
             var card = await _db.Cards.FindAsync(id);
@@ -45,10 +40,14 @@ namespace PowerCards.DAL
             _db.Update(card);
             await _db.SaveChangesAsync();
         }
+        public async Task<bool> CardExists(int id)
+        {
+            return await _db.Cards.AnyAsync(e => e.CardID == id);
+        }
 
 
 
-     
+
 
     }
 }
