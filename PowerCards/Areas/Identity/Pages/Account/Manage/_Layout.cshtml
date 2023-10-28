@@ -9,18 +9,18 @@
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
 }
-<section class="p-5">
-<h1>@UserManager.GetUserName(User)</h1>
 
-<div>
-    <div class="row">
-        <partial name="_ManageNav" />
+<section class="p-5">
+    <h1>@UserManager.GetUserName(User)</h1>
+    <div>
+        <div class="row">
+            <partial name="_ManageNav" />
+        </div>
+        <hr/>
+        <div class="row">
+            @RenderBody()
+        </div>
     </div>
-    <hr />
-    <div class="row">
-        @RenderBody()
-    </div>
-</div>
 </section>
 @section Scripts {
     @RenderSection("Scripts", required: false)
