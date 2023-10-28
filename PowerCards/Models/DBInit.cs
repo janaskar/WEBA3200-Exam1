@@ -1,6 +1,11 @@
 ﻿using PowerCards.DAL;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL.Enum;
+using Microsoft.AspNetCore.Builder;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using PowerCards.Models;
+using System.Collections.Generic;
 
 namespace PowerCards.Models
 {
@@ -10,47 +15,52 @@ namespace PowerCards.Models
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
             AppDbContext context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-           // context.Database.EnsureDeleted();
+
             context.Database.EnsureCreated();
-          
 
-            if (!context.Decks.Any())
-            {
-                var decks = new List<Deck>
-                {
-                    new Deck{
-                        UserName = "NotBarack",
-                        Title = "The 44th president", 
-                        Description = "Learn about Barack Obama", 
-                        Subject = Subject.Math, 
-                        Cards = new List<Card>
-                        {
-                            new Card {Question = "What year was Barack Obama born?", Answer = "1961"},
-                            new Card {Question = "What is Barack Obama's middle name?", Answer = "Hussein"},
-                            new Card {Question = "What is Barack Obama's wife's name?", Answer = "Michelle"},
-                            new Card {Question = "What is Barack Obama's Last Name?", Answer = "Obama"},
-                            new Card {Question = "What is Barack Obama's first name?", Answer = "Barack"},
-                            new Card {Question = "What is Barack Obama's favorite color?", Answer = "Blue"},
-                            new Card {Question = "What is Barack Obama's favorite food?", Answer = "Pizza"},
-                            new Card {Question = "What is Barack Obama's favorite animal?", Answer = "Dog"},
-                        }
-                        },
-
-                };
-                context.Decks.AddRange(decks);
-                context.SaveChanges();
-            }
+            // Seed User
             if (!context.Users.Any())
             {
-                var users = new List<User>()
+                User user = new User()
                 {
-                    new User{UserName = "NotBarack"},
+                    UserName = "test"
                 };
-                context.Users.AddRange(users);
-                context.SaveChanges();
-            
-            }
 
+                context.Users.Add(user);
+
+                // Seed Deck
+                Deck deck = new Deck()
+                {
+                    UserName = user.UserName,
+                    Title = "Sample Deck",
+                    Description = "This is a sample deck description.",
+                    Subject = Subject.Math,
+                };
+
+                context.Decks.Add(deck);
+
+                // Seed Card
+                Card card = new Card()
+                {
+                    DeckID = deck.DeckID,
+                    Question = "Sample Question",
+                    Answer = "Sample Answer",
+                    Hint = "Sample Hint"
+                };
+
+                context.Cards.Add(card);
+
+                // Seed Favorite
+                Favorite favorite = new Favorite()
+                {
+                    UserName = user.UserName,
+                    DeckID = deck.DeckID
+                };
+
+                context.Favorites.Add(favorite);
+
+                context.SaveChanges();
+            }
         }
     }
 }

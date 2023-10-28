@@ -31,11 +31,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddSession();
 
 var app = builder.Build();
-
+DBInit.Seed(app);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    DBInit.Seed(app);
+   
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();
