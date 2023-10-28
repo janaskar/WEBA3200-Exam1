@@ -10,13 +10,13 @@
         @if (Model.UserFavourites.Count() == 0)
         {
             <div class="col-md-12">
-                <h1 class="text-center">You have no favourite decks</h1>
+                <h1 class="text-center">You have no favourites</h1>
             </div>
         }
         else
         {
             <div class="col-md-12">
-                <h1 class="text-center">Your Decks</h1>
+                <h1 class="text-center">Your Favourites</h1>
             </div>
             @foreach (var deck in Model.UserFavourites)
             {
