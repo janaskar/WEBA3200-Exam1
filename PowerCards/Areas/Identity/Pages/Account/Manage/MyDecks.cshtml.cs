@@ -1,10 +1,11 @@
+#nullable disable
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
-
 
 namespace PowerCards.Areas.Identity.Pages.Account.Manage
 {
@@ -15,7 +16,10 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public IList<Deck> UserDecks { get; set; }
 
-        public MyDecksModel(AppDbContext context, UserManager<User> userManager)
+        public MyDecksModel
+        (
+            AppDbContext context,
+            UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;

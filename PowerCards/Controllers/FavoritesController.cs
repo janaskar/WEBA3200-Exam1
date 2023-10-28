@@ -13,165 +13,59 @@ namespace PowerCards.Controllers
 {
     public class FavoritesController : Controller
     {
+        // Dependency injection of the database context
         private readonly AppDbContext _context;
 
+        // Constructor to initialize context
         public FavoritesController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Favorites
-        public async Task<IActionResult> Index()
+        public IActionResult YourAction()
         {
-            var appDbContext = _context.Favorites.Include(f => f.Deck).Include(f => f.User);
-            return View(await appDbContext.ToListAsync());
-        }
+            // Assuming your _context is defined in your controller
+            var favorite = _context.Favorites.FirstOrDefault(f => f.UserName == "SomeUser" && f.DeckID == 123);
 
-        // GET: Favorites/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null || _context.Favorites == null)
-            {
-                return NotFound();
-            }
-
-            var favorite = await _context.Favorites
-                .Include(f => f.Deck)
-                .Include(f => f.User)
-                .FirstOrDefaultAsync(m => m.UserName == id);
-            if (favorite == null)
-            {
-                return NotFound();
-            }
-
+            ViewBag.Context = _context;
             return View(favorite);
         }
 
-        // GET: Favorites/Create
-        public IActionResult Create()
-        {
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title");
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName");
-            return View();
-        }
-
-        // POST: Favorites/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // GET: Favorites Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserName,DeckID")] Favorite favorite)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(favorite);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
-          
-            }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", favorite.DeckID);
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", favorite.UserName);
-            return View();
-        }
+                var existingFavorite = await _context.Favorites
+                    .FirstOrDefaultAsync(f => f.UserName == favorite.UserName && f.DeckID == favorite.DeckID);
 
-        // GET: Favorites/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null || _context.Favorites == null)
-            {
-                return NotFound();
-            }
-
-            var favorite = await _context.Favorites.FindAsync(id);
-            if (favorite == null)
-            {
-                return NotFound();
-            }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", favorite.DeckID);
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", favorite.UserName);
-            return View(favorite);
-        }
-
-        // POST: Favorites/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("UserName,DeckID")] Favorite favorite)
-        {
-            if (id != favorite.UserName)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (existingFavorite == null)
                 {
-                    _context.Update(favorite);
+                    _context.Add(favorite);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FavoriteExists(favorite.UserName))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["DeckID"] = new SelectList(_context.Decks, "DeckID", "Title", favorite.DeckID);
-            ViewData["UserName"] = new SelectList(_context.Users, "UserName", "UserName", favorite.UserName);
-            return View(favorite);
+            return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
         }
 
-        // GET: Favorites/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null || _context.Favorites == null)
-            {
-                return NotFound();
-            }
-
-            var favorite = await _context.Favorites
-                .Include(f => f.Deck)
-                .Include(f => f.User)
-                .FirstOrDefaultAsync(m => m.UserName == id);
-            if (favorite == null)
-            {
-                return NotFound();
-            }
-
-            return View(favorite);
-        }
-
-        // POST: Favorites/Delete/5
+        // POST: Favorites Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string id0, int id1)
         {
             if (_context.Favorites == null)
             {
                 return Problem("Entity set 'AppDbContext.Favorites'  is null.");
             }
-            var favorite = await _context.Favorites.FindAsync(id);
+            var favorite = await _context.Favorites.FindAsync(id0, id1);
             if (favorite != null)
             {
                 _context.Favorites.Remove(favorite);
             }
-            
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Decks", new { id = id1 });
         }
-
-        private bool FavoriteExists(string id)
-        {
-          return (_context.Favorites?.Any(e => e.UserName == id)).GetValueOrDefault();
-        }
-      
     }
 }

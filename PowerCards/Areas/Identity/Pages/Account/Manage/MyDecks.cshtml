@@ -1,61 +1,45 @@
 ﻿@page
 @model MyDecksModel
 @{
-
     ViewData["Title"] = "My Decks";
     ViewData["ActivePage"] = ManageNavPages.MyDecks;
 }
-    <div class="container-fluid">
-    <!--Post users data-->
-    <div class="row">
-        @if(Model.UserDecks.Count() == 0)
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">You have no decks</h1>
-                <a class="nav-link text-dark" asp-area="" asp-controller="Decks" asp-action="Index">Decks</a>
-            </div>
-            <!--Create new deck-->
-            
-            
-        }
-        else
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">Your Decks</h1>
-            </div>
-        }
-        @foreach (var deck in Model.UserDecks)
-        {
-            <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
-                        <div class="card- text-truncate">
-                            <h5 class="card-title">@deck.Title</h5>
+
+<div>
+    @if (Model.UserDecks.Count() == 0)
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">You have no decks</h1>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">Your Decks</h1>
+        </div>
+        <div class="row" style="--bs-gutter-x: 32px;">
+            @foreach (var deck in Model.UserDecks)
+            {
+                <div class="col-md-4 p-3">
+                    <div class="card mb-4 carddeck">
+                        <div class="card-header bg-dark text-white">
+                            <h5>@deck.Title</h5>
+                            <small class="text-muted">@deck.Subject</small>
                         </div>
                         <div class="card-body">
-                            <p class="text-truncate">@deck.Description</p>
+                            <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span> @deck.Description</p>
                         </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Subject: @deck.Subject</small>
-                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn w-100">
-                         
-                            <i i class="bi bi-view-list">View</i>
-                        </a>
-                        <a asp-controller="Decks" asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-danger w-100">
-                            <i class="bi bi-trash">Delete</i>"
-                        </a>
-                        <a asp-controller="Decks" asp-action="Edit" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
-                        <i class="bi bi-pencil-square">Edit</i>
-                        </a>
+                        <div class="d-flex justify-content-start m-3">
+                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-outline-secondary">View</a>
+                            <a asp-controller="Decks" asp-action="Delete" asp-route-id="@deck.DeckID" class="btn btn-outline-danger mx-1">Delete</a>
+                            <a asp-controller="Decks" asp-action="Edit" asp-route-id="@deck.DeckID" class="btn btn-outline-primary">Edit</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-    </div>
-
-    
-
-
+            }
+        </div>
+    }
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -22,10 +22,10 @@ namespace PowerCards.Controllers
             _context = context;
         }
 
+        // GET: Go Back to Deck Details
         public IActionResult DeckDetails(Card card)
         {
             int deckId = card.DeckID;
-
             return RedirectToAction("Details", "Decks", new { id = deckId });
         }
 
@@ -34,13 +34,15 @@ namespace PowerCards.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Cards == null)
+            {
                 return NotFound();
+            }
 
             var card = await _context.Cards.FindAsync(id);
-
             if (card == null)
+            {
                 return NotFound();
-
+            }
             return View(card);
         }
 
@@ -50,7 +52,9 @@ namespace PowerCards.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,CardID,Question,Answer,Hint")] Card card)
         {
             if (id != card.CardID)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -77,7 +81,9 @@ namespace PowerCards.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Cards == null)
+            {
                 return Problem("Entity set 'AppDbContext.Cards'  is null.");
+            }
 
             var card = await _context.Cards.FindAsync(id);
             int? deckId = card?.DeckID;
@@ -88,7 +94,9 @@ namespace PowerCards.Controllers
             }
 
             if (deckId.HasValue)
+            {
                 return RedirectToAction("Details", "Decks", new { id = deckId });
+            }
 
             return RedirectToAction(nameof(Index));
         }
