@@ -12,3 +12,7 @@ body {
     padding-top: 72px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
+
+.row {
+    --bs-gutter-x: none;
+}

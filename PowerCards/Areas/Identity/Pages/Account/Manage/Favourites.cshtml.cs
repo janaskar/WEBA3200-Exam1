@@ -16,14 +16,15 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public IList<Deck> UserFavourites { get; set; }
 
-        public FavouritesModel(
+        public FavouritesModel
+        (
             AppDbContext context,
             UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
-        //Get user favorites
+
         public async Task<IActionResult> OnGetAsync()
         {
             var userName = _userManager.GetUserName(User);

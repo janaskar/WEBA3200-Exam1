@@ -5,42 +5,39 @@
     ViewData["ActivePage"] = ManageNavPages.Favourites;
 }
 
-<div class="container-fluid">
-    <div class="row">
-        @if (Model.UserFavourites.Count() == 0)
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">You have no favourites</h1>
-            </div>
-        }
-        else
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">Your Favourites</h1>
-            </div>
+<div>
+    @if (Model.UserFavourites.Count() == 0)
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">You have no favourites</h1>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">Your Favourites</h1>
+        </div>
+        <div class="row" style="--bs-gutter-x: 32px;">
             @foreach (var deck in Model.UserFavourites)
             {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm" style="min-height: 150px;">
-                        <div class="card-header text-truncate">
-                            <h5 class="card-title">@deck.Title</h5>
+                <div class="col-md-4 p-3">
+                    <div class="card mb-4 carddeck">
+                        <div class="card-header bg-dark text-white">
+                            <h5>@deck.Title</h5>
+                            <small class="text-muted">@deck.Subject</small>
                         </div>
                         <div class="card-body">
-                            <p class="text-truncate">@deck.Description</p>
-
+                            <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span> @deck.Description</p>
                         </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Subject: @deck.Subject</small>
-                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
-
-                                <i i class="bi bi-view-list">View</i>
-                            </a>
+                        <div class="d-flex justify-content-between m-3">
+                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-outline-secondary">View</a>
+                            <p class="text-muted mb-0 d-flex flex-column justify-content-center">By: @deck.UserName</p>
                         </div>
                     </div>
                 </div>
             }
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @section Scripts {

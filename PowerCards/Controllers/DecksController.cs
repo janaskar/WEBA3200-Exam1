@@ -51,7 +51,6 @@ namespace PowerCards.Controllers
                 Deck = deck,
                 Card = new Card() { DeckID = deck.DeckID }
             };
-
             return View(viewModel);
         }
 
@@ -142,7 +141,6 @@ namespace PowerCards.Controllers
             {
                 return NotFound();
             }
-
             return View(deck);
         }
 
@@ -170,6 +168,5 @@ namespace PowerCards.Controllers
         {
           return (_context.Decks?.Any(e => e.DeckID == id)).GetValueOrDefault();
         }
-     
     }
 }
