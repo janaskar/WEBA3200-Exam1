@@ -9,20 +9,25 @@
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
 }
-<section class="p-5">
-<h1>@UserManager.GetUserName(User)</h1>
+@{
+    var title = @ViewData["Title"].ToString();
+}
 
-<div>
-    <div class="row">
-        <partial name="_ManageNav" />
-    </div>
-    <hr />
-    <div class="row">
-      
+
+<section class="p-5">
+    <h1>@UserManager.GetUserName(User)</h1>
+    <div>
+        @if (title != "Delete Personal Data")
+        {
+            <div class="row">
+                <partial name="_ManageNav" />
+            </div>
+        }
+        <hr/>
+        <div>
             @RenderBody()
-       
+        </div>
     </div>
-</div>
 </section>
 @section Scripts {
     @RenderSection("Scripts", required: false)
