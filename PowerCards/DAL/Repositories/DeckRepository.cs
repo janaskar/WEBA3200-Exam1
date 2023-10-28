@@ -24,6 +24,12 @@ namespace PowerCards.DAL
             _context.Decks.Add(deck);
             await _context.SaveChangesAsync();
         }
+        public async Task Details(Deck deck)
+        {
+            _context.Decks.Add(deck);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task Edit(Deck deck)
         {
             _context.Update(deck);

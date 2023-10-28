@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
@@ -14,23 +12,21 @@ namespace PowerCards.Controllers
     public class DecksController : Controller
     {
         // Dependency injection of the database context
-        private readonly AppDbContext _context; 
+        private readonly IDeckRepository _deckRepository;
+
 
         // Constructor to initialize context
-        public DecksController(AppDbContext context)
+        public DecksController(IDeckRepository deckRepository)
         {
-            _context = context;
+            _deckRepository = deckRepository;
         }
-        public List<Deck> DeckConsole()
-        {
-            return _context.Decks.ToList();
-        }
+
 
         // GET: Decks Index
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Decks.Include(d => d.User);
-            return View(await appDbContext.ToListAsync());
+            var decks = await _deckRepository.GetAll();
+            return View(decks);
         }
 
         // GET: Decks Details
@@ -41,10 +37,7 @@ namespace PowerCards.Controllers
                 return NotFound();
             }
 
-            var deck = await _context.Decks
-                .Include(d => d.Cards)
-                .FirstOrDefaultAsync(d => d.DeckID == id);
-
+            var deck = await _deckRepository.GetById((int)id);
             if (deck == null)
             {
                 return NotFound();
@@ -57,6 +50,7 @@ namespace PowerCards.Controllers
             };
             return View(viewModel);
         }
+
 
         // GET: Decks Create
         [HttpGet]
@@ -72,23 +66,22 @@ namespace PowerCards.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(deck);
-                await _context.SaveChangesAsync();
+                await _deckRepository.Create(deck);
                 return RedirectToAction(nameof(Index));
             }
             return View(deck);
         }
 
-        // GET: Decks Edit
+
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Decks == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var deck = await _context.Decks.FindAsync(id);
+            var deck = await _deckRepository.GetById((int)id);
             if (deck == null)
             {
                 return NotFound();
@@ -96,7 +89,6 @@ namespace PowerCards.Controllers
             return View(deck);
         }
 
-        // POST: Decks Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
@@ -110,12 +102,11 @@ namespace PowerCards.Controllers
             {
                 try
                 {
-                    _context.Update(deck);
-                    await _context.SaveChangesAsync();
+                    await _deckRepository.Edit(deck);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DeckExists(deck.DeckID))
+                    if (!(await _deckRepository.GetById(deck.DeckID) is not null))
                     {
                         return NotFound();
                     }
@@ -124,23 +115,22 @@ namespace PowerCards.Controllers
                         throw;
                     }
                 }
-               return RedirectToAction("Details", "Decks", new { id = deck.DeckID });
+                return RedirectToAction("Details", "Decks", new { id = deck.DeckID });
             }
             return View(deck);
         }
+
 
         // GET: Decks Delete
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Decks == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var deck = await _context.Decks
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.DeckID == id);
+            var deck = await _deckRepository.GetById((int)id);
             if (deck == null)
             {
                 return NotFound();
@@ -148,29 +138,23 @@ namespace PowerCards.Controllers
             return View(deck);
         }
 
-        // POST: Decks Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Decks == null)
+            bool success = await _deckRepository.Delete(id);
+            if (!success)
             {
-                return Problem("Entity set 'AppDbContext.Decks'  is null.");
+                return Problem("Error deleting the deck.");
             }
-            var deck = await _context.Decks.FindAsync(id);
-            if (deck != null)
-            {
-                _context.Decks.Remove(deck);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+
         // Utility method to check if a dard exists in the database
-        private bool DeckExists(int id)
+        private async Task<bool> DeckExists(int id)
         {
-          return (_context.Decks?.Any(e => e.DeckID == id)).GetValueOrDefault();
+            return (await _deckRepository.GetById(id)) != null;
         }
     }
 }
