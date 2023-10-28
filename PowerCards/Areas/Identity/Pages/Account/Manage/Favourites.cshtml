@@ -1,35 +1,45 @@
 ﻿@page
 @model FavouritesModel
-
 @{
     ViewData["Title"] = "Favourites";
     ViewData["ActivePage"] = ManageNavPages.Favourites;
-    ;
 }
 
-<h3>@ViewData["Title"]</h3>
-<p>Your Favourite Decks</p>
-<!--User's favorites decks-->
-<div class="container-fluid">
-    <div class="row">
-        @if (Model.UserFavorites.Count() == 0)
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">You have no decks</h1>
-                <a class="nav-link text-dark" asp-area="" asp-controller="Decks" asp-action="Index">DECKS</a>
-            </div>
-            <!--Create new deck-->
-        }
-        else
-        {
-            <div class="col-md-12">
-                <h1 class="text-center">Your Decks</h1>
-            </div>
-        }
-   
-
+<div>
+    @if (Model.UserFavorites.Count() == 0)
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">You have no favourites</h1>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h1 class="text-center">Your Favourites</h1>
+        </div>
+        <div class="row" style="--bs-gutter-x: 32px;">
+            @foreach (var Favorite in Model.UserFavorites)
+            {
+                <div class="col-md-4 p-3">
+                    <div class="card mb-4 carddeck">
+                        <div class="card-header bg-dark text-white">
+                            <h5>@Favorite.Deck?.Title</h5>
+                            <small class="text-muted">@Favorite.Deck?.Subject</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2 text-truncate w-100"><span class="fw-bold">Description:</span> @Favorite.Deck?.Description</p>
+                        </div>
+                        <div class="d-flex justify-content-between m-3">
+                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@Favorite.Deck?.DeckID" class="btn btn-outline-secondary">View</a>
+                            <p class="text-muted mb-0 d-flex flex-column justify-content-center">By: @Favorite.Deck?.User?.UserName</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
