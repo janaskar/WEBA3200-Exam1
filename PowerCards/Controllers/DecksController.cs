@@ -29,7 +29,9 @@ namespace PowerCards.Controllers
             return View(decks);
         }
 
-        // GET: Decks Details
+
+
+        // GET: Decks Details. This is not a part of CRUD Thats why it stays here
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

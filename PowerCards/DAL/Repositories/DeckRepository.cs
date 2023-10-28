@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PowerCards.Models;
+using PowerCards.DAL.Interfaces;
 
 namespace PowerCards.DAL
 {
@@ -24,12 +25,6 @@ namespace PowerCards.DAL
             _context.Decks.Add(deck);
             await _context.SaveChangesAsync();
         }
-        public async Task Details(Deck deck)
-        {
-            _context.Decks.Add(deck);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task Edit(Deck deck)
         {
             _context.Update(deck);
@@ -47,5 +42,6 @@ namespace PowerCards.DAL
             return true;
         }
 
+       
     }
 }

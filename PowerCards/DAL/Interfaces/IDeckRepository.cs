@@ -7,7 +7,6 @@ namespace PowerCards.DAL
         Task<Deck?> GetById(int id);
         Task Create(Deck deck);
         Task Edit(Deck deck);
-        Task Details(Deck deck);
 
         Task<bool> Delete(int id);
     }
