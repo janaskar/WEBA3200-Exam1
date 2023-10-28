@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Identity;
 using PowerCards.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Get the connection string
-var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection");
+var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
+
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
@@ -28,6 +30,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(connectionString);
 });
+
+// Add Serilog
+var LoggerConfiguration = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+
+var logger = LoggerConfiguration.CreateLogger();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()

@@ -14,7 +14,7 @@ namespace PowerCards.Controllers
     public class DecksController : Controller
     {
         // Dependency injection of the database context
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _context; 
 
         // Constructor to initialize context
         public DecksController(AppDbContext context)
