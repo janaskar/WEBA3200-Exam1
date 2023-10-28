@@ -30,6 +30,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(connectionString);
 });
+builder.Services.AddScoped<IDeckRepository, DeckRepository>();
 
 // Add Serilog
 var LoggerConfiguration = new LoggerConfiguration()
