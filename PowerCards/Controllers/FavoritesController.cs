@@ -3,69 +3,60 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using PowerCards.DAL;
+using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
-using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {
     public class FavoritesController : Controller
     {
-        // Dependency injection of the database context
-        private readonly AppDbContext _context;
+        // Dependency injection of the Favorite Repository
+        private readonly IFavoriteRepository _favoriteRepository;
 
-        // Constructor to initialize context
-        public FavoritesController(AppDbContext context)
+        // Constructor to initialize repository
+        public FavoritesController(IFavoriteRepository favoriteRepository)
         {
-            _context = context;
+            _favoriteRepository = favoriteRepository;
         }
 
-        public IActionResult YourAction()
-        {
-            // Assuming your _context is defined in your controller
-            var favorite = _context.Favorites.FirstOrDefault(f => f.UserName == "SomeUser" && f.DeckID == 123);
-
-            ViewBag.Context = _context;
-            return View(favorite);
-        }
-
-        // GET: Favorites Create
+        // POST: Favorites Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserName,DeckID")] Favorite favorite)
         {
+            // Check if the model is valid
             if (ModelState.IsValid)
             {
-                var existingFavorite = await _context.Favorites
-                    .FirstOrDefaultAsync(f => f.UserName == favorite.UserName && f.DeckID == favorite.DeckID);
+                // Check if the favorite already exists
+                var existingFavorite = await _favoriteRepository.GetByCompositeId(favorite.UserName, favorite.DeckID);
 
+                // If the favorite does not exist, create it
                 if (existingFavorite == null)
                 {
-                    _context.Add(favorite);
-                    await _context.SaveChangesAsync();
+                    // Create the favorite
+                    await _favoriteRepository.Create(favorite);
                 }
             }
+            // Redirect to the deck details page
             return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
         }
 
         // POST: Favorites Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id0, int id1)
+        public async Task<IActionResult> DeleteConfirmed(string UserName, int deckId)
         {
-            if (_context.Favorites == null)
+            // Delete the favorite
+            bool isDeleted = await _favoriteRepository.DeleteConfirmed(UserName, deckId);
+            // Check if the favorite was deleted
+            if (!isDeleted)
             {
-                return Problem("Entity set 'AppDbContext.Favorites'  is null.");
+                // If the favorite was not deleted, return not found
+                //error message
+                return NotFound();
             }
-            var favorite = await _context.Favorites.FindAsync(id0, id1);
-            if (favorite != null)
-            {
-                _context.Favorites.Remove(favorite);
-            }
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Decks", new { id = id1 });
+            // Redirect to the deck details page
+            return RedirectToAction("Details", "Decks", new { id = deckId });
         }
     }
 }

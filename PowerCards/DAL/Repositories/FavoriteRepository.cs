@@ -10,37 +10,36 @@ namespace PowerCards.DAL.Repositories
         {
             _db = db;
         }
-       
         public async Task<IEnumerable<Favorite>> GetAll()
         {
-            //return all the favorites from the database
+            // Retrieve all favorites from the database 
             return await _db.Favorites.ToListAsync();
         }
-        public async Task<Favorite?> GetById(int id)
+        public async Task<Favorite?> GetByCompositeId(string? UserName, int deckId)
         {
-            //find the favorite by id
-            return await _db.Favorites.FindAsync(id);
+            // Retrieve the favorite to be displayed
+            return await _db.Favorites.FirstOrDefaultAsync(f => f.UserName == UserName && f.DeckID == deckId);
         }
         public async Task Create(Favorite favorite)
         {
-            //add the favorite to the database and save the changes
+            // Add the favorite to the database and save changes
             _db.Favorites.Add(favorite);
             await _db.SaveChangesAsync();
         }
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteConfirmed(string UserName, int deckId)
         {
-            //retrieve the favorite from the database
-            var favorite = await _db.Favorites.FindAsync(id);
-            //if the favorite is null, return false
-            if (favorite == null)
+            // Retrieve the favorite to be deleted
+            var favorite = await GetByCompositeId(UserName, deckId);
+            // Check if the favorite exists
+            if (favorite != null)
             {
-                return false;
+                // If the favorite exists, delete it and save changes
+                _db.Favorites.Remove(favorite);
+                await _db.SaveChangesAsync();
+                return true;
             }
-            //otherwise, remove the favorite from the database and save the changes
-            _db.Favorites.Remove(favorite);
-            await _db.SaveChangesAsync();
-            return true;
+            // If the favorite does not exist, return false
+            return false;
         }
     }
 }
-

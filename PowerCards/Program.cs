@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using PowerCards.DAL.Interfaces;
+using PowerCards.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
