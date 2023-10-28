@@ -11,7 +11,7 @@ using PowerCards.DAL;
 namespace PowerCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231026151140_InitialCreate")]
+    [Migration("20231027234403_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

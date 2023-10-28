@@ -1,5 +1,6 @@
 ﻿@page
 @model FavouritesModel
+
     @{
         ViewData["Title"] = "Favourites";
         ViewData["ActivePage"] = ManageNavPages.Favourites;
@@ -11,7 +12,7 @@
         <!--User's favorites decks-->
     <div class="container-fluid">
         <div class="row">
-            @if (Model.UserFavourites.Count() == 0)
+        @if (Model.UserFavorites.Count() == 0)
             {
                 <div class="col-md-12">
                     <h1 class="text-center">You have no decks</h1>
@@ -25,27 +26,27 @@
                     <h1 class="text-center">Your Decks</h1>
                 </div>
             }
-            @foreach (var deck in Model.UserFavourites)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm" style="min-height: 150px;">
-                        <div class="card-header text-truncate">
-                            <h5 class="card-title">@deck.Title</h5>
-                            </div>
-                            <div class="card-body">
-                            <p class="text-truncate">@deck.Description</p>
-
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Subject: @deck.Subject</small>
-                            <a asp-controller="Decks" asp-action="Details" asp-route-id="@deck.DeckID" class="btn btn-primary w-100">
-
-                                <i i class="bi bi-view-list">View</i>
-                            </a>
-                        </div>
+        @foreach (var favorite in Model.UserFavorites)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm" style="min-height: 150px;">
+                    <div class="card-header text-truncate">
+                        <h5 class="card-title">@favorite.Deck.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-truncate">@favorite.Deck.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Subject: @favorite.Deck.Subject</small>
+                        <a asp-controller="Decks" asp-action="Details" asp-route-id="@favorite.Deck.DeckID" class="btn btn-primary w-100">
+                            <i class="bi bi-view-list">View</i>
+                        </a>
                     </div>
                 </div>
-            }
+            </div>
+        }
+
+
         </div>
     </div>
 

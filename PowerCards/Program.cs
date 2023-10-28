@@ -4,6 +4,7 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using PowerCards.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
@@ -11,6 +12,10 @@ var connectionString = builder.Configuration.GetConnectionString("AppDbContextCo
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration["ConnectionStrings:AppDbContextConnection"]);
@@ -30,6 +35,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    DBInit.Seed(app);
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();

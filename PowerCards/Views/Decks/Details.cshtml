@@ -11,24 +11,23 @@
         <small>Username: @Html.DisplayFor(model => model.Deck.UserName)</small>
         <small>Subject: @Html.DisplayFor(model => model.Deck.Subject)</small>
     </div>
-            @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
-            {
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+    {
 
-                <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary align-item-end"><i class="bi bi-pen">Edit Deck</i> </a>
-            }
-        <div class="d-flex justify-content-end">
-
-            <form method="post" asp-controller="Favorites" asp-action="Create">
-                <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
-                <input type="hidden" name="UserName" value="@Model.Deck.UserName" />
-                <button type="submit" class="btn"><i class="bi bi-star">Favourite</i></button>
-            </form>
-            <form method="post" asp-controller="Favorites" asp-action="Delete">
-                <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
-                <input type="hidden" name="UserName" value="@Model.Deck.UserName" />
-                <button type="submit" class="btn"><i class="bi bi-star">Unfavourite</i></button>
-            </form>
-        </div>
+        <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary align-item-end"><i class="bi bi-pen">Edit Deck</i> </a>
+    }
+    <div class="d-flex justify-content-end">
+        <form asp-action="Create" asp-controller="Favorites" method="post" >
+            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
+            <input type="hidden" name="UserName" value="@UserManager.GetUserName(User)" />
+            <button type="submit" class="btn"><i class="bi bi-star">Favourite</i></button>
+        </form>
+        <form method="post" asp-controller="Favorites" asp-action="Delete">
+            <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
+            <input type="hidden" name="UserName" value="@UserManager.GetUserName(User)" />
+            <button type="submit" class="btn"><i class="bi bi-star">Unfavourite</i></button>
+        </form>
+    </div>
     </>
 
     <div class="mt-4">
