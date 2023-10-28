@@ -37,8 +37,4 @@
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DAL\DBinit\" />
-  </ItemGroup>
-
 </Project>

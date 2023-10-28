@@ -185,8 +185,7 @@ namespace PowerCards.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     DeckID = table.Column<int>(type: "INTEGER", nullable: false),
                     Question = table.Column<string>(type: "TEXT", nullable: true),
-                    Answer = table.Column<string>(type: "TEXT", nullable: true),
-                    Hint = table.Column<string>(type: "TEXT", nullable: true)
+                    Answer = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
