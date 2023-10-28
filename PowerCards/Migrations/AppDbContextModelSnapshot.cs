@@ -161,9 +161,6 @@ namespace PowerCards.Migrations
                     b.Property<int>("DeckID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Hint")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Question")
                         .HasColumnType("TEXT");
 

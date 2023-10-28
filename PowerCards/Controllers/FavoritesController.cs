@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
+using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {

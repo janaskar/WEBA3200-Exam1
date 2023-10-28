@@ -11,7 +11,7 @@ using PowerCards.DAL;
 namespace PowerCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231026151130_InitDb")]
+    [Migration("20231028141744_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -163,9 +163,6 @@ namespace PowerCards.Migrations
 
                     b.Property<int>("DeckID")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Hint")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Question")
                         .HasColumnType("TEXT");

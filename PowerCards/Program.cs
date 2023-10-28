@@ -4,16 +4,29 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using PowerCards.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
+
+// Get the connection string
+var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
+
+// Use the obtained connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration["ConnectionStrings:AppDbContextConnection"]);
+    options.UseSqlite(connectionString);
 });
 
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -45,5 +58,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+// Seed the database
+DbInit.Seed(app);
 
 app.Run();

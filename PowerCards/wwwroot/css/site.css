@@ -12,3 +12,32 @@ body {
     padding-top: 72px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
+/* Carousel Styles */
+.carousel-inner, .carousel-item {
+    height: 100vh; 
+}
+    .carousel-item img {
+        height: 100%;
+        object-fit: cover;
+    }
+.carousel-inner .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.carousel-inner .bold-text, .bold-text {
+    font-weight: bold;
+}
+
+/*Second Article paragraph style*/
+.info-text {
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    word-wrap: break-word;
+}

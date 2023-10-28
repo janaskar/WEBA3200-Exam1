@@ -9,11 +9,12 @@
         <h1 class="text-center">FLASHCARDS:</h1>
         <a asp-action="Create" class="btn btn-primary mb-4">Create New Flashcard</a>
     </div>
+    <a class="btn btn primary" asp-action="DeckConsole"> Console Output</a>
     <div class="row">
         @foreach (var deck in Model)
         {
             <div class="col-md-4">
-                <div class="card mb-4 carddeck" >
+                <div class="card mb-4 carddeck shadow-sm">
                     <div class="card-header bg-dark text-white">
                         <h5>@deck.Title</h5>
                         <small class="text-muted">@deck.UserName</small>

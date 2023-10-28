@@ -21,6 +21,10 @@ namespace PowerCards.Controllers
         {
             _context = context;
         }
+        public List<Deck> DeckConsole()
+        {
+            return _context.Decks.ToList();
+        }
 
         // GET: Decks Index
         public async Task<IActionResult> Index()
@@ -121,7 +125,7 @@ namespace PowerCards.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+               return RedirectToAction("Details", "Decks", new { id = deck.DeckID });
             }
             return View(deck);
         }
