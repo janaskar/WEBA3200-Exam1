@@ -9,15 +9,22 @@
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
 }
+@{
+    var title = @ViewData["Title"].ToString();
+}
+
 
 <section class="p-5">
     <h1>@UserManager.GetUserName(User)</h1>
     <div>
-        <div class="row">
-            <partial name="_ManageNav" />
-        </div>
+        @if (title != "Delete Personal Data")
+        {
+            <div class="row">
+                <partial name="_ManageNav" />
+            </div>
+        }
         <hr/>
-        <div class="row">
+        <div>
             @RenderBody()
         </div>
     </div>

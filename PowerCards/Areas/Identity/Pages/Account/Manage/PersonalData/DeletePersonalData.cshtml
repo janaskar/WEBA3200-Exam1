@@ -7,7 +7,7 @@
 
 <h3>@ViewData["Title"]</h3>
 
-<div class="alert alert-warning" role="alert">
+<div class="d-flex flex-row alert alert-warning" role="alert">
     <p>
         <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
     </p>
@@ -25,6 +25,11 @@
             </div>
         }
         <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
+        <div>
+            <p>
+                <a asp-page="../UserSettings">Back to user settings</a>
+            </p>
+        </div>
     </form>
 </div>
 
