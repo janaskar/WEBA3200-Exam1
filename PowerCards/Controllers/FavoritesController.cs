@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
@@ -21,7 +22,7 @@ namespace PowerCards.Controllers
 
         // POST: Favorites Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(Favorite favorite)
         {
             // Check if the model is valid
@@ -43,7 +44,7 @@ namespace PowerCards.Controllers
 
         // POST: Favorites Delete
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(string id0, int id1)
         {
             // Delete the favorite

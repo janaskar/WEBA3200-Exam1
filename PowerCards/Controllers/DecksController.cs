@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ namespace PowerCards.Controllers
             return View(decks);
         }
 
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (!id.HasValue)
@@ -55,13 +58,14 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(Deck deck)
         {
             if (ModelState.IsValid)
@@ -75,6 +79,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var deck = await _deckRepository.GetById(id);
@@ -88,7 +93,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(Deck deck)
         {
             if (ModelState.IsValid)
@@ -102,6 +107,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var deck = await _deckRepository.GetById(id);
@@ -115,7 +121,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var success = await _deckRepository.Delete(id);

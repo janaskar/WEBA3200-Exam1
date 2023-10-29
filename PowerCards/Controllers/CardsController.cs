@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult DeckDetails(Card card)
         {
             try
@@ -44,7 +46,7 @@ namespace PowerCards.Controllers
         }
         // POST: Card Create from Deck details view
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> CreateFromDeckDetails(Card card)
         {
             try
@@ -68,6 +70,8 @@ namespace PowerCards.Controllers
            
         }
         // GET: Card Edit
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var card = await _cardRepository.GetById(id);
@@ -82,7 +86,7 @@ namespace PowerCards.Controllers
 
         // POST: Card Edit
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(Card card)
         {
             if (ModelState.IsValid)
@@ -100,7 +104,7 @@ namespace PowerCards.Controllers
 
         // POST: Card Delete
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Retrieve the card to be deleted
