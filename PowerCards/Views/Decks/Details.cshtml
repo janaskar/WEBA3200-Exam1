@@ -94,21 +94,25 @@
             Add a New Card
         </div>
         <div class="card-body">
+            <div asp-validation-summary="All" class="text-danger"></div>
             <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
                 <input type="hidden" asp-for="Card.DeckID" />
                 <div class="form-group">
                     <label asp-for="Card.Question">Question</label>
                     <input asp-for="Card.Question" class="form-control" />
+                    <span asp-validation-for="Card.Question" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Card.Answer">Answer</label>
                     <input asp-for="Card.Answer" class="form-control" />
+                    <span asp-validation-for="Card.Answer" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-3">
                     <button type="submit" class="btn btn-primary">Add Card</button>
                 </div>
             </form>
         </div>
+        
     </div>
     <!-- End Card Creation Form -->
     <div class="d-flex justify-content-between pt-3">

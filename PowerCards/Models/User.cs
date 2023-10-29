@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
 namespace PowerCards.Models
@@ -7,7 +8,9 @@ namespace PowerCards.Models
     {
         [Key]
         public override string UserName { get; set; }
+        [BindNever]
         public virtual List<Deck>? Decks { get; set; }
+        [BindNever]
         public virtual List<Favorite>? Favorites { get; set; }
     }
 

@@ -156,12 +156,16 @@ namespace PowerCards.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DeckID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.HasKey("CardID");
@@ -178,6 +182,7 @@ namespace PowerCards.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Subject")
@@ -189,6 +194,7 @@ namespace PowerCards.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("DeckID");

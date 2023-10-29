@@ -11,8 +11,8 @@ using PowerCards.DAL;
 namespace PowerCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231028141804_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231029193930_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,12 +159,16 @@ namespace PowerCards.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DeckID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.HasKey("CardID");
@@ -181,6 +185,7 @@ namespace PowerCards.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Subject")
@@ -192,6 +197,7 @@ namespace PowerCards.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("DeckID");

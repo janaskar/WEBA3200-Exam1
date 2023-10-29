@@ -162,9 +162,9 @@ namespace PowerCards.Migrations
                 {
                     DeckID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserName = table.Column<string>(type: "TEXT", nullable: true),
+                    UserName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     Title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     Subject = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -184,8 +184,8 @@ namespace PowerCards.Migrations
                     CardID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     DeckID = table.Column<int>(type: "INTEGER", nullable: false),
-                    Question = table.Column<string>(type: "TEXT", nullable: true),
-                    Answer = table.Column<string>(type: "TEXT", nullable: true)
+                    Question = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
+                    Answer = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
