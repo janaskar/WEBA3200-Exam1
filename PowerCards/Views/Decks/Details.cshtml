@@ -1,5 +1,6 @@
 ﻿@model PowerCards.ViewModels.DeckViewModel;
 @inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager;
 @{
     ViewData["Title"] = "Details";
 }
@@ -69,16 +70,20 @@
                             </div>
                         </div>
                         <!--Only user who created the deck then card can edit and delete-->
+                        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
+                        {
 
-                        <!-- Edit & Delete Actions -->
-                        <div class="col-md-1 row align-self-center p-0" style="min-width: 90px;">
-                            <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary my-2 min-"><i class="bi bi-pen">Edit</i></a>
-                            <form class="p-0 my-2" method="post" asp-controller="Cards" asp-action="Delete">
-                                <input type="hidden" name="id" value="@card.CardID" />
-                                <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash">Delete</i></button>
-                            </form>
-                        </div>
+                            <!-- Edit & Delete Actions -->
+                            <div class="col-md-1 row align-self-center p-0" style="min-width: 90px;">
+                                <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary my-2 min-"><i class="bi bi-pen">Edit</i></a>
+                                <form class="p-0 my-2" method="post" asp-controller="Cards" asp-action="Delete">
+                                    <input type="hidden" name="id" value="@card.CardID" />
+                                    <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash">Delete</i></button>
+                                </form>
+                            </div>
+                        }
                     </div>
+
                 }
             }
             else
@@ -90,31 +95,33 @@
     </div>
     <!-- Cards Display end-->
     <!-- Begin Card Creation Form -->
-    <div class="card mt-4">
-        <div class="card-header">
-            Add a New Card
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                Add a New Card
+            </div>
+            <div class="card-body">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
+                    <input type="hidden" asp-for="Card.DeckID" />
+                    <div class="form-group">
+                        <label asp-for="Card.Question">Question</label>
+                        <input asp-for="Card.Question" class="form-control" />
+                        <span asp-validation-for="Card.Question" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Card.Answer">Answer</label>
+                        <input asp-for="Card.Answer" class="form-control" />
+                        <span asp-validation-for="Card.Answer" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-primary">Add Card</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="card-body">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
-                <input type="hidden" asp-for="Card.DeckID" />
-                <div class="form-group">
-                    <label asp-for="Card.Question">Question</label>
-                    <input asp-for="Card.Question" class="form-control" />
-                    <span asp-validation-for="Card.Question" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Card.Answer">Answer</label>
-                    <input asp-for="Card.Answer" class="form-control" />
-                    <span asp-validation-for="Card.Answer" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">Add Card</button>
-                </div>
-            </form>
-        </div>
-        
-    </div>
+    }
     <!-- End Card Creation Form -->
     <div class="d-flex justify-content-between pt-3">
         <a asp-action="Index" class="btn btn-success">Back to List</a>
