@@ -11,15 +11,14 @@ using PowerCards.DAL.Repositories;
 using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ??
+        throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
 // Get the connection string
-var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
 
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
 }
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -50,7 +49,6 @@ loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceCont
 
 var logger = loggerConfiguration.CreateLogger();
 builder.Logging.AddSerilog(logger);
-//
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -93,8 +91,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
