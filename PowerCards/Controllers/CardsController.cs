@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,9 @@ namespace PowerCards.Controllers
         {
             _cardRepository = cardRepository;
             _logger = logger;
-        }
 
-        [HttpGet]
+        }
+         [HttpGet]
         [Authorize]
         public IActionResult DeckDetails(Card card)
         {
@@ -40,7 +41,7 @@ namespace PowerCards.Controllers
             catch(Exception e)
             {
                 _logger.LogError("[CardsController] DeckDetails() failed, error message {e}", e.Message);
-                return NotFound();
+                return NotFound("Could not find DeckDetails()");
             }
            
         }
@@ -74,6 +75,7 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
+            // Retrieve the card to be edited
             var card = await _cardRepository.GetById(id);
             if (card == null)
             {
@@ -81,6 +83,7 @@ namespace PowerCards.Controllers
                 return BadRequest("Card not fouind for the CardID");
             }
             return View(card);
+
         }
 
 
@@ -89,9 +92,12 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(Card card)
         {
+            // Check if the model state is valid
             if (ModelState.IsValid)
             {
+                
                 bool success = await _cardRepository.Edit(card);
+                // If the card was successfully edited, redirect to the deck details view
                 if (success)
                 {
                        return RedirectToAction("Details", "Decks", new { id = card.DeckID });
@@ -109,19 +115,12 @@ namespace PowerCards.Controllers
         {
             // Retrieve the card to be deleted
             var card = await _cardRepository.GetById(id);
+            // Delete the card
             if (card == null)
             {
-                _logger .LogError("[CardsController] DeleteConfirmed() failed, error message {e}", "Card not found");
+                _logger.LogError("[CardsController] DeleteConfirmed() failed, error message {e}", "Card not found");
                 return NotFound();
             }
-
-            bool isDeleted = await _cardRepository.Delete(id);
-            if (!isDeleted)
-            {
-
-                return NotFound();
-            }
-
             // Use the previously retrieved card's DeckID for redirection
             return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }
