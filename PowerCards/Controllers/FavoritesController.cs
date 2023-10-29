@@ -44,10 +44,10 @@ namespace PowerCards.Controllers
         // POST: Favorites Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string UserName, int deckId)
+        public async Task<IActionResult> DeleteConfirmed(string id0, int id1)
         {
             // Delete the favorite
-            bool isDeleted = await _favoriteRepository.DeleteConfirmed(UserName, deckId);
+            bool isDeleted = await _favoriteRepository.DeleteConfirmed(id0, id1);
             // Check if the favorite was deleted
             if (!isDeleted)
             {
@@ -56,7 +56,7 @@ namespace PowerCards.Controllers
                 return NotFound();
             }
             // Redirect to the deck details page
-            return RedirectToAction("Details", "Decks", new { id = deckId });
+            return RedirectToAction("Details", "Decks", new { id = id1 });
         }
     }
 }

@@ -52,14 +52,34 @@ var logger = loggerConfiguration.CreateLogger();
 builder.Logging.AddSerilog(logger);
 //
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    // Password settings
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequiredUniqueChars = 1;
+
+    // Username settings
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+})
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddTransient<IEmailSender, DummyEmailSender>();
-
 builder.Services.AddRazorPages();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".AdventureWorks.Session";
+    options.IdleTimeout = TimeSpan.FromSeconds(86400); // 24h
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
