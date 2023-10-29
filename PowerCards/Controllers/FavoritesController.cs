@@ -22,7 +22,7 @@ namespace PowerCards.Controllers
         // POST: Favorites Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserName,DeckID")] Favorite favorite)
+        public async Task<IActionResult> Create(Favorite favorite)
         {
             // Check if the model is valid
             if (ModelState.IsValid)

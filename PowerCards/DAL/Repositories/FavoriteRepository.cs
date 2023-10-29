@@ -6,40 +6,80 @@ namespace PowerCards.DAL.Repositories
     public class FavoriteRepository : IFavoriteRepository
     {
         private readonly AppDbContext _db;
-        public FavoriteRepository(AppDbContext db)
+        private readonly ILogger<FavoriteRepository> _logger;
+        public FavoriteRepository(AppDbContext db, ILogger<FavoriteRepository> logger)
         {
             _db = db;
+            _logger = logger;
         }
-        public async Task<IEnumerable<Favorite>> GetAll()
+        public async Task<IEnumerable<Favorite>?> GetAll()
         {
-            // Retrieve all favorites from the database 
-            return await _db.Favorites.ToListAsync();
-        }
-        public async Task<Favorite?> GetByCompositeId(string? UserName, int deckId)
-        {
-            // Retrieve the favorite to be displayed
-            return await _db.Favorites.FirstOrDefaultAsync(f => f.UserName == UserName && f.DeckID == deckId);
-        }
-        public async Task Create(Favorite favorite)
-        {
-            // Add the favorite to the database and save changes
-            _db.Favorites.Add(favorite);
-            await _db.SaveChangesAsync();
-        }
-        public async Task<bool> DeleteConfirmed(string UserName, int deckId)
-        {
-            // Retrieve the favorite to be deleted
-            var favorite = await GetByCompositeId(UserName, deckId);
-            // Check if the favorite exists
-            if (favorite != null)
+            try
             {
-                // If the favorite exists, delete it and save changes
-                _db.Favorites.Remove(favorite);
+                return await _db.Favorites.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "[FavoriteRepository] Favorite ToListAsync() failed when GetAll(), error message: {e}", e.Message);
+                return null;
+            }
+        }
+      //Get by composite id
+      public async Task<Favorite?> GetByCompositeId(string UserName, int DeckID)
+        {
+            try
+            {
+                return await _db.Favorites.FindAsync(UserName, DeckID);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "[FavoriteRepository] Favorite FindAsync() failed when GetByCompositeId(), error message: {e}", e.Message);
+                return null;
+            }
+        }  
+        public async Task<bool> Create(Favorite favorite)
+        {
+           
+            try
+            {
+                // Add the favorite
+                _db.Favorites.Add(favorite);
+                // Save the changes
                 await _db.SaveChangesAsync();
+                // Return true if the favorite was created
                 return true;
             }
-            // If the favorite does not exist, return false
-            return false;
+            catch (Exception e)
+            {
+                _logger.LogError(e, "[FavoriteRepository] Favorite Add() failed when Create(), error message: {e}", e.Message);
+                // Return false if the favorite was not created
+                return false;
+            }
+        }
+        public async Task<bool> DeleteConfirmed(string UserName, int DeckID)
+        {
+            try
+            {
+                // Get the favorite
+                var favorite = await GetByCompositeId(UserName, DeckID);
+                if (favorite == null)
+                {
+                    _logger.LogError("[FavoriteRepository] Favorite not found for username: {userName} and deckID: {deckID}", UserName, DeckID);
+                    return false;
+                }
+                // Remove the favorite
+                _db.Favorites.Remove(favorite);
+                // Save the changes
+                await _db.SaveChangesAsync();
+                // Return true if the favorite was deleted
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "[FavoriteRepository] Favorite Remove() failed, error message: {e}", e.Message);
+                // Return false if the favorite was not deleted
+                return false;
+            }
         }
     }
 }
