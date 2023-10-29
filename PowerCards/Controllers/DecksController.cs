@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
@@ -11,184 +12,119 @@ namespace PowerCards.Controllers
 {
     public class DecksController : Controller
     {
-        // Dependency injection of the database context
         private readonly IDeckRepository _deckRepository;
+        private readonly ILogger<DecksController> _logger;
 
-
-        // Constructor to initialize context
-        public DecksController(IDeckRepository deckRepository)
+        public DecksController(IDeckRepository deckRepository, ILogger<DecksController> logger)
         {
             _deckRepository = deckRepository;
+            _logger = logger;
         }
 
-
-        // GET: Decks Index
         public async Task<IActionResult> Index()
         {
-            // Retrieve all decks from the database 
             var decks = await _deckRepository.GetAll();
+            if(decks == null)
+            {
+                _logger.LogError("[DeckController] Item list not found while executing _deckRepository.GetAll()");
+                return NotFound("Deck ");
+            }
             return View(decks);
         }
 
-
-
-        // GET: Decks Details. This is not a part of CRUD Thats why it stays here
         public async Task<IActionResult> Details(int? id)
         {
-            // Check if the id is null
-            if (id == null)
+            if (!id.HasValue)
             {
-                return NotFound();
-            }
-            // Retrieve the deck to be displayed
-            var deck = await _deckRepository.GetById((int)id);
-            // Check if the deck exists
-            if (deck == null)
-            {
-                // If the deck does not exist, return not found
-                return NotFound();
+                _logger.LogError("[DecksController] DeckID not found");
+                return NotFound("DeckID not found");
             }
 
-            // Create a view model to hold the deck and the card
+            var deck = await _deckRepository.GetById(id.Value);
+            if (deck == null)
+            {
+                _logger.LogError("[DecksController] Deck not found while executing _deckRepository.GetAll()");
+                return NotFound("Deck not found");
+            }
             var viewModel = new DeckViewModel
             {
-                // Set the deck to the deck retrieved from the database
                 Deck = deck,
-                // Create a new card with the deck id
                 Card = new Card() { DeckID = deck.DeckID }
             };
             return View(viewModel);
         }
 
-
-        // GET: Decks Create
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Decks Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Create(Deck deck)
         {
-            // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                // Create the deck
-                await _deckRepository.Create(deck);
-                // Redirect to the deck index view
-                return RedirectToAction(nameof(Index));
+                bool success = await _deckRepository.Create(deck);
+                if(success)
+                    return RedirectToAction(nameof(Index));
             }
+            _logger.LogWarning("[DecksController] Failed to create deck with DeckID: {DeckID}", deck.DeckID);
             return View(deck);
         }
 
-        // GET: Decks Edit
         [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            // Check if the id is null
-            if (id == null)
+            var deck = await _deckRepository.GetById(id);
+            if(deck == null)
             {
-                // If the id is null, return not found
-                return NotFound();
-            }
-            // Retrieve the deck to be edited
-            var deck = await _deckRepository.GetById((int)id);
-            // Check if the deck exists
-            if (deck == null)
-            {
-                // If the deck does not exist, return not found
-                return NotFound();
+                _logger.LogError("[DeckController] Deck not found when updating/editing in the DeckID {DeckID:0000", id);
+                return BadRequest("Deck not found for the DeckID");
             }
             return View(deck);
+
         }
 
-        // POST: Decks Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DeckID,UserName,Title,Description,Subject")] Deck deck)
+        public async Task<IActionResult> Edit(Deck deck)
         {
-            // Check if the id of the deck to be edited matches the id of the deck in the model
-            if (id != deck.DeckID)
-            {
-                return NotFound();
-            }
-            // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                try
-                {
-                    // Edit the deck
-                    await _deckRepository.Edit(deck);
-                }
-                // Check if the deck exists
-                catch (DbUpdateConcurrencyException)
-                {
-                    // If the deck does not exist, return not found
-                    if (!(await _deckRepository.GetById(deck.DeckID) is not null))
-                    {
-                        return NotFound();
-                    }
-                    // If the deck exists, throw the exception
-                    else
-                    {
-                        throw;
-                    }
-                }
-                // Redirect to the deck details view
-                return RedirectToAction("Details", "Decks", new { id = deck.DeckID });
+                bool success = await _deckRepository.Edit(deck);
+                if (success)
+                    return RedirectToAction(nameof(Index));
             }
-            // If the model state is not valid, return the deck
+            _logger.LogWarning("[DecksController] Failed to edit deck with DeckID: {DeckID}", deck.DeckID);
             return View(deck);
         }
 
-
-        // GET: Decks Delete
         [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            // Check if the id is null
-            if (id == null)
+            var deck = await _deckRepository.GetById(id);
+            if(deck == null)
             {
-                return NotFound();
+                _logger.LogError("[DeckController] Deck not found for the DeckID {DeckID: 0000}", id);
+                return BadRequest("Deck not found for the DeckID");
             }
-            // Retrieve the deck to be deleted
-            var deck = await _deckRepository.GetById((int)id);
-            // Check if the deck exists
-            if (deck == null)
-            {
-                // If the deck does not exist, return not found 
-                return NotFound();
-            }
-            // Return the deck to be deleted
             return View(deck);
+
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //Retrieve the deck to be deleted
-            bool success = await _deckRepository.Delete(id);
-            // Check if the deck exists
+            var success = await _deckRepository.Delete(id);
             if (!success)
             {
-                // If the deck does not exist, return not found
-                // Til Jay: Vi kan adde errorhandling der notFound er
+                _logger.LogError("[DecksController] Failed to delete deck with DeckID: {DeckID}", id);
                 return NotFound();
             }
-            // Redirect to the deck index view
             return RedirectToAction(nameof(Index));
-        }
-
-
-        // Utility method to check if a dard exists in the database
-        private async Task<bool> DeckExists(int id)
-        {
-            // Check if the deck exists by id
-            return (await _deckRepository.GetById(id)) != null;
         }
     }
 }

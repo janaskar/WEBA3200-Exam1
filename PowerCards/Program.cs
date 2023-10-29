@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using PowerCards.DAL.Interfaces;
 using PowerCards.DAL.Repositories;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,12 +40,17 @@ builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
 // Add Serilog
-var LoggerConfiguration = new LoggerConfiguration()
+var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
 
-var logger = LoggerConfiguration.CreateLogger();
+loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
+                            e.Level == LogEventLevel.Information &&
+                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
+
+var logger = loggerConfiguration.CreateLogger();
 builder.Logging.AddSerilog(logger);
+//
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()

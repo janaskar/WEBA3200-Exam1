@@ -3,10 +3,10 @@ namespace PowerCards.DAL
 {
     public interface IDeckRepository
     {
-        Task<IEnumerable<Deck>> GetAll();
+        Task<IEnumerable<Deck>?> GetAll();
         Task<Deck?> GetById(int id);
-        Task Create(Deck deck);
-        Task Edit(Deck deck);
+        Task<bool> Create(Deck deck);
+        Task<bool>Edit(Deck deck);
         Task<bool> Delete(int id);
     }
 }
