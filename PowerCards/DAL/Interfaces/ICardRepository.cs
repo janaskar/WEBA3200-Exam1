@@ -7,9 +7,10 @@ namespace PowerCards.DAL.Interfaces
     {
         Task<IEnumerable<Card>> GetAll();
         Task<Card?> GetById(int id);
-        Task Create(Card card);
-        Task Edit(Card card);
+        Task <bool>Create(Card card);
+        Task <bool> Edit(Card card);
         Task<bool> Delete(int id);
-        Task<bool> CardExists(int id);
+       
+       
     }
 }
