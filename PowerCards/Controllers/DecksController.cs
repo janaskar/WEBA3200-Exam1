@@ -66,11 +66,14 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Create(Deck deck)
         {
+            // Check if the model state is valid
             if (ModelState.IsValid)
             {
                 // Create the deck
                 deck.UserName = _httpContextAccessor.HttpContext.User.Identity.Name;
                 bool success = await _deckRepository.Create(deck);
+
+                // Redirect to the deck index page
                 if(success)
                     return RedirectToAction(nameof(Index));
             }
@@ -99,21 +102,24 @@ namespace PowerCards.Controllers
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
+                // Get the deck id from the route
                 var id = Convert.ToInt32(RouteData.Values["id"]);
                 var DeckEdit = await _deckRepository.GetById(id);
 
+                // Check if the current user is the owner of the deck
                 if (DeckEdit.UserName != _httpContextAccessor.HttpContext.User.Identity.Name)
                 {
                     _logger.LogError("[DecksController] This Deck does not belong to the current user");
                     return BadRequest("Deck does not belong to the current user");
                 }
 
+                // Update the deck
                 DeckEdit.Title = deck.Title;
                 DeckEdit.Description = deck.Description;
                 DeckEdit.Subject = deck.Subject;
-                // Update the deck
                 bool success = await _deckRepository.Edit(DeckEdit);
-                // If the deck was successfully edited, redirect to the deck details view
+
+                // Redirect to the deck index page
                 if (success)
                     return RedirectToAction(nameof(Index));
             }
@@ -139,28 +145,33 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed()
         {
-            // Check if the deck exists
+            // Get the deck id from the route
             var id = Convert.ToInt32(RouteData.Values["id"]);
             var DeckDelete = await _deckRepository.GetById(id);
+
             // If not, return bad request
             if (DeckDelete == null)
             {
                 _logger.LogError("[DecksController] Deck not found for the DeckID {DeckID: 0000}", id);
                 return BadRequest("Deck not found for the DeckID");
             }
+
+            // Check if the current user is the owner of the deck
             if (DeckDelete.UserName != _httpContextAccessor.HttpContext.User.Identity.Name)
             {
                 _logger.LogError("[DecksController] This Deck does not belong to the current user");
                 return BadRequest("Deck does not belong to the current user");
             }
+
+            // Delete the deck
             var success = await _deckRepository.Delete(id);
-            if (!success)
-            {
-                // If the deck was not deleted, return not found
-                _logger.LogError("[DecksController] Failed to delete deck with DeckID: {DeckID}", id);
-                return NotFound();
-            }
-            return RedirectToAction(nameof(Index));
+
+            // Redirect to the deck index page
+            if (success)
+                return RedirectToAction(nameof(Index));
+
+            _logger.LogError("[DecksController] Failed to delete deck with DeckID: {DeckID}", id);
+            return NotFound();
         }
     }
 }
