@@ -1,5 +1,4 @@
 ﻿@model PowerCards.Models.Card
-
 @{
     ViewData["Title"] = "Edit";
 }
@@ -12,8 +11,6 @@
         <div class="card-body">
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="DeckID" />
-                <input type="hidden" asp-for="CardID" />
                 <div class="form-group">
                     <label asp-for="Question" class="control-label"></label>
                     <input asp-for="Question" class="form-control" />
@@ -31,7 +28,7 @@
         </div>
     </div>
     <div>
-        <a asp-action="DeckDetails" asp-route-DeckID="@Model.DeckID">Back to Deck</a>
+        <a asp-controller="Decks" asp-action="Details" asp-route-id="@Model.DeckID">Back to deck</a>
     </div>
 </section>
 

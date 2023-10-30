@@ -6,6 +6,7 @@ namespace PowerCards.DAL.Interfaces
     {
         Task<IEnumerable<Card>> GetAll();
         Task<Card?> GetById(int id);
+        Task<string> GetUserNameByDeckId(int id);
         Task<bool>Create(Card card);
         Task<bool> Edit(Card card);
         Task<bool> Delete(int id);

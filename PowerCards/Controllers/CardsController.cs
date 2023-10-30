@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
+using PowerCards.DAL.Repositories;
 using PowerCards.Models;
 
 namespace PowerCards.Controllers
@@ -10,56 +11,33 @@ namespace PowerCards.Controllers
         // Dependency injection of the Card Repository
         private readonly ICardRepository _cardRepository;
         private readonly ILogger<CardsController> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         // Constructor to initialize repository
-        public CardsController(ICardRepository cardRepository, ILogger<CardsController> logger)
+        public CardsController(ICardRepository cardRepository, ILogger<CardsController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _cardRepository = cardRepository;
             _logger = logger;
-
+            _httpContextAccessor = httpContextAccessor;
         }
-        [HttpGet]
-        public IActionResult DeckDetails(Card card)
-        {
-            try
-            {
-                // Retrieve the deck id from the card
-                int deckId = card.DeckID;
-                // Redirect to the deck details view
-                return RedirectToAction("Details", "Decks", new { id = deckId });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("[CardsController] DeckDetails() failed, error message {e}", e.Message);
-                return NotFound("Could not find DeckDetails()");
-            }
 
-        }
         // POST: Card Create from Deck details view
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateFromDeckDetails(Card card)
         {
-            try
+            card.DeckID = Convert.ToInt32(RouteData.Values["id"]);
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    // Create the card
-                    await _cardRepository.Create(card);
-                }
-                // If the model state is not valid, return to the deck details view
-                return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+                // Create the card
+                await _cardRepository.Create(card);
             }
-            catch (Exception e)
-            {
-                _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", e.Message);
-                // Redirect to the deck details view
-                return RedirectToAction("Details", "Decks", new { id = card.DeckID });
-            }
-
-
-
+            // If the model state is not valid, return to the deck details view
+            return BadRequest($"'{card.DeckID}'");
+            
+            //return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }
+
         // GET: Card Edit
         [HttpGet]
         [Authorize]
@@ -75,7 +53,6 @@ namespace PowerCards.Controllers
 
         }
 
-
         // POST: Card Edit
         [HttpPost]
         [Authorize]
@@ -84,18 +61,27 @@ namespace PowerCards.Controllers
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
+                var id = Convert.ToInt32(RouteData.Values["id"]);
+                var CardEdit = await _cardRepository.GetById(id);
+                string username = await _cardRepository.GetUserNameByDeckId(CardEdit.DeckID);
+                if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+                {
+                    _logger.LogError("[CardsController] Edit() failed, error message {e}", "User is not authorized to edit this card");
+                    return BadRequest("User is not authorized to edit this card");
+                }
 
-                bool success = await _cardRepository.Edit(card);
+                CardEdit.Answer = card.Answer;
+                CardEdit.Question = card.Question;
+                bool success = await _cardRepository.Edit(CardEdit);
                 // If the card was successfully edited, redirect to the deck details view
                 if (success)
                 {
-                    return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+                    return RedirectToAction("Details", "Decks", new { id = CardEdit.DeckID });
                 }
             }
             _logger.LogError("[CardsController] Edit() failed, error message {e}", "Card not found");
             return BadRequest("Card not fouind for the CardID");
         }
-
 
         // POST: Card Delete
         [HttpPost, ActionName("Delete")]

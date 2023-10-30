@@ -30,16 +30,30 @@ namespace PowerCards.DAL.Repositories
         public async Task<Card?> GetById(int id)
         {
            try
-            {
+           {
                 //return the card with the given id
                 return await _db.Cards.FindAsync(id);
+           }
+           catch (Exception e)
+           {
+                _logger.LogError("[ItemReposository] Card FindAsync() failed when GetById(), error message {e}", e.Message);
+                return null;
+           }
+        }
+        public async Task<string> GetUserNameByDeckId(int id)
+        {
+            try
+            {
+                var deck = await _db.Decks.FindAsync(id);
+                return deck.UserName;
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card FindAsync() failed when GetById(), error message {e}", e.Message);
-                return null;
+                _logger.LogError("[ItemReposository] Card Add() failed when Create(), error message {e}", e.Message);
+                return "not found";
             }
         }
+
         public async Task<bool> Create(Card card)
         {
             try

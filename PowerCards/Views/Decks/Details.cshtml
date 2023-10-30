@@ -79,7 +79,6 @@
                                 </form>
                             </div>
                     </div>
-
                 }
             }
             else
@@ -97,8 +96,7 @@
             </div>
             <div class="card-body">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
-                    <input type="hidden" asp-for="Card.DeckID" />
+                <form asp-action="CreateFromDeckDetails" method="post">
                     <div class="form-group">
                         <label asp-for="Card.Question">Question</label>
                         <input asp-for="Card.Question" class="form-control" />
