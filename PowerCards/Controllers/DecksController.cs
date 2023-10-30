@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.DAL;
 using PowerCards.Models;
-using PowerCards.ViewModels;
+using PowerCards.ViewModels;    
 
 namespace PowerCards.Controllers
 {
@@ -28,12 +28,15 @@ namespace PowerCards.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Get all decks
             var decks = await _deckRepository.GetAll();
+            // If the list is empty, return not found
             if(decks == null)
             {
                 _logger.LogError("[DeckController] Item list not found while executing _deckRepository.GetAll()");
-                return NotFound("Deck ");
+                return NotFound("Cannot find Decks");
             }
+            // Get the current user
             return View(decks);
         }
 
@@ -41,21 +44,20 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
-            if (!id.HasValue)
-            {
-                _logger.LogError("[DecksController] DeckID not found");
-                return NotFound("DeckID not found");
-            }
-
+            // Check if the deck exists
+            // Get the deck
             var deck = await _deckRepository.GetById(id.Value);
             if (deck == null)
             {
+                // If the deck does not exist, return not found
                 _logger.LogError("[DecksController] Deck not found while executing _deckRepository.GetAll()");
                 return NotFound("Deck not found");
             }
             var viewModel = new DeckViewModel
             {
+                // Get the cards of the deck
                 Deck = deck,
+                // Create a new card
                 Card = new Card() { DeckID = deck.DeckID }
             };
             return View(viewModel);
@@ -74,6 +76,7 @@ namespace PowerCards.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Create the deck
                 bool success = await _deckRepository.Create(deck);
                 if(success)
                     return RedirectToAction(nameof(Index));
@@ -86,21 +89,17 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
+            // Check if the deck exists
             var deck = await _deckRepository.GetById(id);
             if (deck == null)
             {
+                // If the deck does not exist, return not found
                 _logger.LogError("[DecksController] Deck not found for the DeckID {DeckID: 0000}", id);
                 return BadRequest("Deck not found for the DeckID");
             }
-            var currUsername = User.Identity.Name;
-            if (deck.UserName != currUsername)
-            {
-                // If not, return unauthorized
-                return Unauthorized("You are not the owner");
-            }   
             return View(deck);
-            
-           
+
+
 
         }
 
@@ -108,18 +107,23 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(Deck deck)
         {
+            // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                bool Success = await _deckRepository.Edit(deck);
-                if (Success)
+                // Update the deck
+                bool success = await _deckRepository.Edit(deck);
+                // If the deck was successfully edited, redirect to the deck details view
+                if (success)
                 {
-                    return RedirectToAction(nameof(Index));
-                }
-
+                   return RedirectToAction(nameof(Index));
+                }   
+               
             }
-            _logger.LogWarning("[DecksController] Failed to edit deck with DeckID: {DeckID}", deck.DeckID);
+
+            _logger.LogError("[DecksController] Edit() failed, error message {e}", "Deck not found");
             return View(deck);
         }
+
 
 
         [HttpGet]
@@ -133,12 +137,6 @@ namespace PowerCards.Controllers
                 return BadRequest("Deck not found for the DeckID");
             }
             // Check if the current user is the owner of the deck
-            var currUsername = User.Identity.Name;
-            if (deck.UserName != currUsername)
-            {
-                // If not, return unauthorized
-                return Unauthorized("You are not the owner");
-            }
             return View(deck);
 
         }
@@ -155,14 +153,6 @@ namespace PowerCards.Controllers
                 _logger.LogError("[DecksController] Deck not found for the DeckID {DeckID: 0000}", id);
                 return BadRequest("Deck not found for the DeckID");
             }
-            // Check if the current user is the owner of the deck
-            var currUsername = User.Identity.Name;
-            if(DeckDelete.UserName != currUsername)
-            {
-                // If not, return unauthorized
-                return Unauthorized("You are not the owner");
-            }
-            // If the deck exists, delete it
             var success = await _deckRepository.Delete(id);
             if (!success)
             {

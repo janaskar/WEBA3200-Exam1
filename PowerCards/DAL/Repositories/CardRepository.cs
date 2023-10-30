@@ -47,7 +47,9 @@ namespace PowerCards.DAL
         {
             try
             {
+                //add the card
                 _db.Cards.Add(card);
+                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -61,7 +63,9 @@ namespace PowerCards.DAL
         {
             try
             {
-                _db.Cards.Update(card);
+              //Update the card
+               _db.Cards.Update(card);
+                // Save changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -75,13 +79,16 @@ namespace PowerCards.DAL
         {
             try
             {
+                //find the card with the given id
                 var card = await _db.Cards.FindAsync(id);
                 if (card == null)
                 {
                     _logger.LogError("[ItemReposository] Card FindAsync() failed when Delete(), error message {e}", "Card not found");
                     return false;
                 }
+                //remove the card
                 _db.Cards.Remove(card);
+                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }

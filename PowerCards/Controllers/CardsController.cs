@@ -114,12 +114,22 @@ namespace PowerCards.Controllers
         {
             // Retrieve the card to be deleted
             var card = await _cardRepository.GetById(id);
-            // Delete the card
+
             if (card == null)
             {
                 _logger.LogError("[CardsController] DeleteConfirmed() failed, error message {e}", "Card not found");
                 return NotFound();
             }
+
+            // Delete the card using your card repository
+            bool success = await _cardRepository.Delete(card.CardID);
+
+            if (!success)
+            {
+                _logger.LogError("[CardsController] DeleteConfirmed() failed while deleting, error message {e}", "Failed to delete the card");
+                return BadRequest("Failed to delete the card");
+            }
+
             // Use the previously retrieved card's DeckID for redirection
             return RedirectToAction("Details", "Decks", new { id = card.DeckID });
         }

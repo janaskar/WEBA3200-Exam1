@@ -10,7 +10,6 @@ namespace PowerCards.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [BindNever]
         public int DeckID { get; set; }
 
         [ForeignKey("User")]

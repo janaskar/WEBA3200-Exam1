@@ -18,6 +18,7 @@ namespace PowerCards.DAL
         {
             try
             {
+                //return all decks from the database
                 return await _db.Decks.ToListAsync();
             }
             catch(Exception e)
@@ -31,6 +32,7 @@ namespace PowerCards.DAL
         {
             try
             {
+                //return the deck with the given id
                 return await _db.Decks.FindAsync(id);
             }
             catch(Exception e)
@@ -43,7 +45,9 @@ namespace PowerCards.DAL
         {
             try
             {
+                //add the deck
                 _db.Decks.Add(deck);
+                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -57,27 +61,33 @@ namespace PowerCards.DAL
         {
             try
             {
+                // Update the deck
                 _db.Decks.Update(deck);
+                // Save changes
                 await _db.SaveChangesAsync();
                 return true;
             }
             catch (Exception e)
             {
-                _logger.LogError("[DeckRepository] deck FindAsync(id) failed when updating the DeckID {DeckID:0000}, error message: {e},", deck, e.Message);
+                _logger.LogError("[DeckRepository] deck FindAsync(id) failed when editing the DeckID {DeckID:0000}, error message: {e},", deck, e.Message);
                 return false;
             }
         }
+
         public async Task<bool> Delete(int id)
         {
             try
             {
+                // Find the deck with the given id
                 var deck = await _db.Decks.FindAsync(id);
                 if (deck == null)
                 {
                     _logger.LogError("[DeckRepository] deck FindAsync(id) failed when deleting the DeckID {DeckID:0000}" ,id);
                     return false;
                 }
+                // Remove the deck
                 _db.Decks.Remove(deck);
+                // Save changes
                 await _db.SaveChangesAsync();
                 return true;
             }
