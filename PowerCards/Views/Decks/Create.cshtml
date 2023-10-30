@@ -1,7 +1,5 @@
 ﻿﻿@using PowerCards.DAL.Enum
 @model PowerCards.Models.Deck
-@inject UserManager<User> UserManager
-
 @{
     ViewData["Title"] = "Create";
 }
@@ -14,7 +12,6 @@
         <div class="card-body">
             <form asp-action="Create">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <input type="hidden" asp-for="UserName" value="@UserManager.GetUserName(User)" />
                 <div class="form-group">
                     <label asp-for="Title" class="control-label"></label>
                     <input asp-for="Title" class="form-control" />

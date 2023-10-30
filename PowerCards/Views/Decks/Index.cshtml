@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<PowerCards.Models.Deck>
-
+@inject SignInManager<User> SignInManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,7 +7,14 @@
 <section class="p-5">
     <div>
         <h1 class="text-center">DECKS</h1>
-        <a asp-action="Create" class="btn btn-primary mb-4">Create New Deck</a>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <a asp-action="Create" class="btn btn-primary mb-4">Create New Deck</a>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary mb-4">Create New Deck </a>
+        }
     </div>
     <div class="row" style="--bs-gutter-x: 32px;">
         @foreach (var deck in Model)

@@ -6,6 +6,7 @@ using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
 using PowerCards.DAL.Repositories;
 using PowerCards.DAL;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ??
@@ -25,7 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString);
 });
 
-
+// Add Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     // Password settings
@@ -46,17 +47,24 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-// Add repositories
-builder.Services.AddScoped<IDeckRepository, DeckRepository>();
-builder.Services.AddScoped<ICardRepository, CardRepository>();
-builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
+// Add authorization
 builder.Services.AddRazorPages();
+builder.Services.AddMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".AdventureWorks.Session";
     options.IdleTimeout = TimeSpan.FromSeconds(86400); // 24h
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+       .AddCookie();
+
+// Add repositories
+builder.Services.AddScoped<IDeckRepository, DeckRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
 // Add Serilog
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
