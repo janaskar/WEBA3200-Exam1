@@ -26,9 +26,13 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Get the current user
             var userName = _userManager.GetUserName(User);
+            // Get the user favorites
             UserFavorites = await _context.Favorites
+                // Filter by the current user
                           .Where(f => f.UserName == userName)
+                          // Include the deck
                           .Include(f => f.Deck)
                           .ToListAsync();
 

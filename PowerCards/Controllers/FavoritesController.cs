@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
@@ -13,11 +14,13 @@ namespace PowerCards.Controllers
     {
         // Dependency injection of the Favorite Repository
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly SignInManager<User> _signInManager;
 
         // Constructor to initialize repository
-        public FavoritesController(IFavoriteRepository favoriteRepository)
+        public FavoritesController(IFavoriteRepository favoriteRepository, SignInManager<User> signInManager)
         {
             _favoriteRepository = favoriteRepository;
+            _signInManager = signInManager;
         }
 
         // POST: Favorites Create
@@ -55,6 +58,10 @@ namespace PowerCards.Controllers
                 // If the favorite was not deleted, return not found
                 //error message
                 return NotFound();
+            }
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("You are not logged in");
             }
             // Redirect to the deck details page
             return RedirectToAction("Details", "Decks", new { id = id1 });

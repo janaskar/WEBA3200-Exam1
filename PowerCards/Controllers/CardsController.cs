@@ -82,6 +82,8 @@ namespace PowerCards.Controllers
                 _logger.LogError("[CardsController] Edit() failed, error message {e}", "Card not found");
                 return BadRequest("Card not fouind for the CardID");
             }
+         
+
             return View(card);
 
         }
@@ -98,7 +100,7 @@ namespace PowerCards.Controllers
                 
                 bool success = await _cardRepository.Edit(card);
                 // If the card was successfully edited, redirect to the deck details view
-                if (success)
+                if (success )
                 {
                        return RedirectToAction("Details", "Decks", new { id = card.DeckID });
                 }               

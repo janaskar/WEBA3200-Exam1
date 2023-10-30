@@ -27,8 +27,11 @@ namespace PowerCards.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Get the current user
             var userName = _userManager.GetUserName(User);
+            // Get the user decks
             UserDecks = await _context.Decks
+                // Filter by the current user
                           .Where(d => d.UserName == userName)
                           .ToListAsync();
             return Page();

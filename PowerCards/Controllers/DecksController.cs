@@ -23,6 +23,7 @@ namespace PowerCards.Controllers
             _deckRepository = deckRepository;
             _logger = logger;
             _userManager = userManager;
+
         }
 
         public async Task<IActionResult> Index()

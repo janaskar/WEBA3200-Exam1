@@ -70,9 +70,6 @@
                             </div>
                         </div>
                         <!--Only user who created the deck then card can edit and delete-->
-                        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
-                        {
-
                             <!-- Edit & Delete Actions -->
                             <div class="col-md-1 row align-self-center p-0" style="min-width: 90px;">
                                 <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary my-2 min-"><i class="bi bi-pen">Edit</i></a>
@@ -81,7 +78,6 @@
                                     <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash">Delete</i></button>
                                 </form>
                             </div>
-                        }
                     </div>
 
                 }
@@ -95,8 +91,6 @@
     </div>
     <!-- Cards Display end-->
     <!-- Begin Card Creation Form -->
-    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Deck.UserName)
-    {
         <div class="card mt-4">
             <div class="card-header">
                 Add a New Card
@@ -121,7 +115,6 @@
                 </form>
             </div>
         </div>
-    }
     <!-- End Card Creation Form -->
     <div class="d-flex justify-content-between pt-3">
         <a asp-action="Index" class="btn btn-success">Back to List</a>
