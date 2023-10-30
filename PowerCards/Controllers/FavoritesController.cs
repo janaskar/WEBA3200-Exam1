@@ -11,56 +11,48 @@ namespace PowerCards.Controllers
         // Dependency injection of the Favorite Repository
         private readonly IFavoriteRepository _favoriteRepository;
         private readonly SignInManager<User> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         // Constructor to initialize repository
-        public FavoritesController(IFavoriteRepository favoriteRepository, SignInManager<User> signInManager)
+        public FavoritesController(IFavoriteRepository favoriteRepository, SignInManager<User> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _favoriteRepository = favoriteRepository;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // POST: Favorites Create
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(Favorite favorite)
+        public async Task<IActionResult> Favorite()
         {
-            // Check if the model is valid
-            if (ModelState.IsValid)
-            {
-                // Check if the favorite already exists
-                var existingFavorite = await _favoriteRepository.GetByCompositeId(favorite.UserName, favorite.DeckID);
+            // Get the deck id from referer
+            var referer = Request.Headers["Referer"].ToString();
+            var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
 
-                // If the favorite does not exist, create it
-                if (existingFavorite == null)
-                {
-                    // Create the favorite
-                    await _favoriteRepository.Create(favorite);
-                }
-            }
-            // Redirect to the deck details page
-            return RedirectToAction("Details", "Decks", new { id = favorite.DeckID });
-        }
+            // Get the username of current user
+            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
 
-        // POST: Favorites Delete
-        [HttpPost, ActionName("Delete")]
-        [Authorize]
-        public async Task<IActionResult> DeleteConfirmed(string id0, int id1)
-        {
-            // Delete the favorite
-            bool isDeleted = await _favoriteRepository.DeleteConfirmed(id0, id1);
-            // Check if the favorite was deleted
-            if (!isDeleted)
+            var favorite = new Favorite
             {
-                // If the favorite was not deleted, return not found
-                //error message
-                return NotFound();
-            }
-            if (!User.Identity.IsAuthenticated)
+                UserName = username,
+                DeckID = deckid
+            };
+
+            // Check if the favorite already exists
+            var existingFavorite = await _favoriteRepository.GetByCompositeId(favorite.UserName, favorite.DeckID);
+
+            // If the favorite does not exist, create it
+            if (existingFavorite == null)
             {
-                return Unauthorized("You are not logged in");
+                // Create the favorite
+                await _favoriteRepository.Create(favorite);
             }
-            // Redirect to the deck details page
-            return RedirectToAction("Details", "Decks", new { id = id1 });
+            else
+            {
+                await _favoriteRepository.DeleteConfirmed(favorite.UserName, favorite.DeckID);
+            }
+            return RedirectToAction("Details", "Decks", new { id = deckid });
         }
     }
 }

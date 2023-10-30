@@ -19,20 +19,17 @@
 
         <div class="align-self-center">
             <div class="row">
-                @if (Model.Deck.Favorites.Any(favorite => favorite.UserName == UserManager.GetUserName(User) && favorite.DeckID == Model.Deck.DeckID))
+                @if (SignInManager.IsSignedIn(User))
                 {
-                    <form method="post" asp-controller="Favorites" asp-action="Delete">
-                        <input type="hidden" name="id1" value="@Model.Deck.DeckID" />
-                        <input type="hidden" name="id0" value="@UserManager.GetUserName(User)" />
-                        <button type="submit" class="btn btn-warning"><i class="bi bi-star-fill">Favourite</i></button>
-                    </form>
-                }
-                else
-                {
-                    <form method="post" asp-controller="Favorites" asp-action="Create">
-                        <input type="hidden" name="DeckID" value="@Model.Deck.DeckID" />
-                        <input type="hidden" name="UserName" value="@UserManager.GetUserName(User)" />
-                        <button type="submit" class="btn btn-outline-warning"><i class="bi bi-star">Favourite</i></button>
+                    <form method="post" asp-controller="Favorites" asp-action="Favorite">
+                        @if (Model.Deck.Favorites.Any(favorite => favorite.UserName == UserManager.GetUserName(User) && favorite.DeckID == Model.Deck.DeckID))
+                        {
+                            <button type="submit" class="btn btn-warning"><i class="bi bi-star-fill">Favourite</i></button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-outline-warning"><i class="bi bi-star">Favourite</i></button>
+                        }
                     </form>
                 }
             </div>
@@ -48,28 +45,30 @@
             {
                 foreach (var card in Model.Deck.Cards)
                 {
-                    <div class="row mb-4 w-100 d-flex justify-content-between row align-content-center">
-                        <!-- Question Card -->
-                        <div class="col-md-5">
-                            <div class="card bg-dark text-white">
-                                <div class="card-body">
-                                    <h5 class="card-title">Question</h5>
-                                    <p class="card-text">@card.Question</p>
+                    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+                    {
+                        <div class="row mb-4 w-100 d-flex justify-content-between row align-content-center">
+                            <!-- Question Card -->
+                            <div class="col-md-5">
+                                <div class="card bg-dark text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Question</h5>
+                                        <p class="card-text">@card.Question</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Answer Card -->
-                        <div class="col-md-5">
-                            <div class="card">
-                                <div class="card-body hidden-answer">
-                                    <h5 class="card-title">Answer</h5>
-                                    <p class="card-text">@card.Answer</p>
+                            <!-- Answer Card -->
+                            <div class="col-md-5">
+                                <div class="card">
+                                    <div class="card-body hidden-answer">
+                                        <h5 class="card-title">Answer</h5>
+                                        <p class="card-text">@card.Answer</p>
+                                    </div>
+                                    <button class="toggle-answer-btn">Show Answer</button>
                                 </div>
-                                <button class="toggle-answer-btn">Show Answer</button>
                             </div>
-                        </div>
-                        <!--Only user who created the deck then card can edit and delete-->
+                            <!--Only user who created the deck then card can edit and delete-->
                             <!-- Edit & Delete Actions -->
                             <div class="col-md-1 row align-self-center p-0" style="min-width: 90px;">
                                 <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary my-2 min-"><i class="bi bi-pen">Edit</i></a>
@@ -78,7 +77,33 @@
                                     <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash">Delete</i></button>
                                 </form>
                             </div>
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-4 w-100 d-flex justify-content-between row align-content-center">
+                            <!-- Question Card -->
+                            <div class="col-md-5">
+                                <div class="card bg-dark text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Question</h5>
+                                        <p class="card-text">@card.Question</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Answer Card -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body hidden-answer">
+                                        <h5 class="card-title">Answer</h5>
+                                        <p class="card-text">@card.Answer</p>
+                                    </div>
+                                    <button class="toggle-answer-btn">Show Answer</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             }
             else
@@ -89,6 +114,9 @@
         </div>
     </div>
     <!-- Cards Display end-->
+
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+    {
     <!-- Begin Card Creation Form -->
         <div class="card mt-4">
             <div class="card-header">
@@ -96,7 +124,7 @@
             </div>
             <div class="card-body">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <form asp-action="CreateFromDeckDetails" method="post">
+                <form asp-controller="Cards" asp-action="CreateFromDeckDetails" method="post">
                     <div class="form-group">
                         <label asp-for="Card.Question">Question</label>
                         <input asp-for="Card.Question" class="form-control" />
@@ -113,12 +141,13 @@
                 </form>
             </div>
         </div>
-    <!-- End Card Creation Form -->
-    <div class="d-flex justify-content-between pt-3">
-        <a asp-action="Index" class="btn btn-success">Back to List</a>
-        <div>
-            <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary mx-3">Edit Deck</a>
-            <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+        <!-- End Card Creation Form -->
+        <div class="d-flex justify-content-between pt-3">
+            <a asp-action="Index" class="btn btn-success">Back to List</a>
+            <div>
+                <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary mx-3">Edit Deck</a>
+                <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+            </div>
         </div>
-    </div>
+    }
 </section>

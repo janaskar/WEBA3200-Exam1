@@ -26,16 +26,36 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> CreateFromDeckDetails(Card card)
         {
-            card.DeckID = Convert.ToInt32(RouteData.Values["id"]);
+            // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                // Create the card
-                await _cardRepository.Create(card);
+                // Get the deck id from referer
+                var referer = Request.Headers["Referer"].ToString();
+                var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
+
+                // Get the username of the deck and check if it matches the current user
+                string username = await _cardRepository.GetUserNameByDeckId(deckid);
+                if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+                {
+                    _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", "User is not authorized to create this card");
+                    return BadRequest("User is not authorized to create this card");
+                }
+
+                // Create a new card
+                var CardCreate = new Card
+                {
+                    DeckID = deckid,
+                    Question = card.Question,
+                    Answer = card.Answer
+                };
+                bool success = await _cardRepository.Create(CardCreate);
+
+                // Redirect to the deck details page
+                if (success)
+                    return RedirectToAction("Details", "Decks", new { id = deckid });
             }
-            // If the model state is not valid, return to the deck details view
-            return BadRequest($"'{card.DeckID}'");
-            
-            //return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+            _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", "Card not found");
+            return BadRequest("Card not found for the CardID");
         }
 
         // GET: Card Edit
@@ -61,7 +81,10 @@ namespace PowerCards.Controllers
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
+                // Get the card id from the route
                 var id = Convert.ToInt32(RouteData.Values["id"]);
+
+                // Get the username of the deck and check if it matches the current user
                 var CardEdit = await _cardRepository.GetById(id);
                 string username = await _cardRepository.GetUserNameByDeckId(CardEdit.DeckID);
                 if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
@@ -70,10 +93,12 @@ namespace PowerCards.Controllers
                     return BadRequest("User is not authorized to edit this card");
                 }
 
-                CardEdit.Answer = card.Answer;
+                // Update the card
                 CardEdit.Question = card.Question;
+                CardEdit.Answer = card.Answer;
                 bool success = await _cardRepository.Edit(CardEdit);
-                // If the card was successfully edited, redirect to the deck details view
+
+                // Redirect to the deck details page
                 if (success)
                 {
                     return RedirectToAction("Details", "Decks", new { id = CardEdit.DeckID });
@@ -91,23 +116,33 @@ namespace PowerCards.Controllers
             // Retrieve the card to be deleted
             var card = await _cardRepository.GetById(id);
 
+            // Get the deck id from referer
+            var referer = Request.Headers["Referer"].ToString();
+            var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
+
+            // If not, return bad request
             if (card == null)
             {
                 _logger.LogError("[CardsController] DeleteConfirmed() failed, error message {e}", "Card not found");
-                return NotFound();
+                return BadRequest("Card not found for the CardID");
+            }
+
+            // Get the username of the deck and check if it matches the current user
+            string username = await _cardRepository.GetUserNameByDeckId(deckid);
+            if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+            {
+                _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", "User is not authorized to create this card");
+                return BadRequest("User is not authorized to create this card");
             }
 
             // Delete the card using your card repository
             bool success = await _cardRepository.Delete(card.CardID);
 
-            if (!success)
-            {
-                _logger.LogError("[CardsController] DeleteConfirmed() failed while deleting, error message {e}", "Failed to delete the card");
-                return BadRequest("Failed to delete the card");
-            }
-
-            // Use the previously retrieved card's DeckID for redirection
-            return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+            // Redirect to the deck details page
+            if (success)
+                return RedirectToAction("Details", "Decks", new { id = deckid });
+            _logger.LogError("[CardsController] DeleteConfirmed() failed while deleting, error message {e}", "Failed to delete the card");
+            return BadRequest("Failed to delete the card");
         }
     }
 }
