@@ -2,7 +2,7 @@
 using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
 
-namespace PowerCards.DAL
+namespace PowerCards.DAL.Repositories
 {
     public class DeckRepository : IDeckRepository
     {
@@ -47,7 +47,6 @@ namespace PowerCards.DAL
             {
                 //add the deck
                 _db.Decks.Add(deck);
-                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -61,9 +60,8 @@ namespace PowerCards.DAL
         {
             try
             {
-                // Update the deck
+                //update the deck
                 _db.Decks.Update(deck);
-                // Save changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -78,16 +76,15 @@ namespace PowerCards.DAL
         {
             try
             {
-                // Find the deck with the given id
+                //find the deck with the given id
                 var deck = await _db.Decks.FindAsync(id);
                 if (deck == null)
                 {
                     _logger.LogError("[DeckRepository] deck FindAsync(id) failed when deleting the DeckID {DeckID:0000}" ,id);
                     return false;
                 }
-                // Remove the deck
+                //remove the deck
                 _db.Decks.Remove(deck);
-                // Save changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -96,9 +93,6 @@ namespace PowerCards.DAL
                 _logger.LogError("[DeckRepository] deck FindAsync(id) failed when deleting the DeckID {DeckID:0000}, error message: {e},", id, e.Message);
                 return false;
             }
-
-
-
-      }
+        }
     }
 }

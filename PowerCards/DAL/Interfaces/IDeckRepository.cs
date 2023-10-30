@@ -1,5 +1,6 @@
 ﻿using PowerCards.Models;
-namespace PowerCards.DAL
+
+namespace PowerCards.DAL.Interfaces
 {
     public interface IDeckRepository
     {

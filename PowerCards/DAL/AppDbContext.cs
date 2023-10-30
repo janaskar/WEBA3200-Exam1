@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PowerCards.Models;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace PowerCards.DAL
 {

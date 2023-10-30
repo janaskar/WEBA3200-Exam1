@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PowerCards.DAL;
+using PowerCards.DAL.Interfaces;
+using PowerCards.ViewModels;
 using PowerCards.Models;
-using PowerCards.ViewModels;    
 
 namespace PowerCards.Controllers
 {
@@ -41,7 +36,6 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             // Check if the deck exists

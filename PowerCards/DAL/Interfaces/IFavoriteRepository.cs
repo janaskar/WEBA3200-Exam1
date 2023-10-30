@@ -1,6 +1,4 @@
 ﻿using PowerCards.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PowerCards.DAL.Interfaces
 {

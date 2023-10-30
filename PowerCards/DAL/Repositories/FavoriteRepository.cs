@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
+
 namespace PowerCards.DAL.Repositories
 {
     public class FavoriteRepository : IFavoriteRepository
@@ -16,6 +17,7 @@ namespace PowerCards.DAL.Repositories
         {
             try
             {
+                //return all decks from the database
                 return await _db.Favorites.ToListAsync();
             }
             catch (Exception e)
@@ -29,6 +31,7 @@ namespace PowerCards.DAL.Repositories
         {
             try
             {
+                //return the deck with the given id (username and deckid)
                 return await _db.Favorites.FindAsync(UserName, DeckID);
             }
             catch (Exception e)
@@ -42,17 +45,14 @@ namespace PowerCards.DAL.Repositories
            
             try
             {
-                // Add the favorite
+                //add the favorite
                 _db.Favorites.Add(favorite);
-                // Save the changes
                 await _db.SaveChangesAsync();
-                // Return true if the favorite was created
                 return true;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "[FavoriteRepository] Favorite Add() failed when Create(), error message: {e}", e.Message);
-                // Return false if the favorite was not created
                 return false;
             }
         }
@@ -60,24 +60,21 @@ namespace PowerCards.DAL.Repositories
         {
             try
             {
-                // Get the favorite
+                //find the favorite with the given id
                 var favorite = await GetByCompositeId(UserName, DeckID);
                 if (favorite == null)
                 {
                     _logger.LogError("[FavoriteRepository] Favorite not found for username: {userName} and deckID: {deckID}", UserName, DeckID);
                     return false;
                 }
-                // Remove the favorite
+                //remove the favorite
                 _db.Favorites.Remove(favorite);
-                // Save the changes
                 await _db.SaveChangesAsync();
-                // Return true if the favorite was deleted
                 return true;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "[FavoriteRepository] Favorite Remove() failed, error message: {e}", e.Message);
-                // Return false if the favorite was not deleted
                 return false;
             }
         }

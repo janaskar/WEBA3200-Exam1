@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using PowerCards.DAL;
 using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
-using PowerCards.ViewModels;
 
 namespace PowerCards.Controllers
 {
@@ -28,7 +19,6 @@ namespace PowerCards.Controllers
 
         }
         [HttpGet]
-        [Authorize]
         public IActionResult DeckDetails(Card card)
         {
             try

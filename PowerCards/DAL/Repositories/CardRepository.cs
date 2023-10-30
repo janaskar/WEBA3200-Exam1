@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
-using System.Threading.Tasks;
 
-namespace PowerCards.DAL
+namespace PowerCards.DAL.Repositories
 {
     public class CardRepository : ICardRepository
     {
@@ -23,7 +22,6 @@ namespace PowerCards.DAL
             }
             catch (Exception e)
             {
-                //log the error message
                 _logger.LogError("[ItemReposository] Card ToListAsync() failed when GetAll(), error message {e}", e.Message);
                 return new List<Card>();
             }
@@ -38,7 +36,6 @@ namespace PowerCards.DAL
             }
             catch (Exception e)
             {
-                //log the error message
                 _logger.LogError("[ItemReposository] Card FindAsync() failed when GetById(), error message {e}", e.Message);
                 return null;
             }
@@ -49,7 +46,6 @@ namespace PowerCards.DAL
             {
                 //add the card
                 _db.Cards.Add(card);
-                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -63,9 +59,8 @@ namespace PowerCards.DAL
         {
             try
             {
-              //Update the card
-               _db.Cards.Update(card);
-                // Save changes
+                //update the card
+                _db.Cards.Update(card);
                 await _db.SaveChangesAsync();
                 return true;
             }
@@ -88,7 +83,6 @@ namespace PowerCards.DAL
                 }
                 //remove the card
                 _db.Cards.Remove(card);
-                //save the changes
                 await _db.SaveChangesAsync();
                 return true;
             }
