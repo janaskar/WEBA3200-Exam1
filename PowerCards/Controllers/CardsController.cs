@@ -27,7 +27,7 @@ namespace PowerCards.Controllers
             _logger = logger;
 
         }
-         [HttpGet]
+        [HttpGet]
         [Authorize]
         public IActionResult DeckDetails(Card card)
         {
@@ -38,12 +38,12 @@ namespace PowerCards.Controllers
                 // Redirect to the deck details view
                 return RedirectToAction("Details", "Decks", new { id = deckId });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError("[CardsController] DeckDetails() failed, error message {e}", e.Message);
                 return NotFound("Could not find DeckDetails()");
             }
-           
+
         }
         // POST: Card Create from Deck details view
         [HttpPost]
@@ -60,30 +60,27 @@ namespace PowerCards.Controllers
                 // If the model state is not valid, return to the deck details view
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", e.Message);
                 // Redirect to the deck details view
                 return RedirectToAction("Details", "Decks", new { id = card.DeckID });
             }
-               
-            
-           
+
+
+
         }
         // GET: Card Edit
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            // Retrieve the card to be edited
             var card = await _cardRepository.GetById(id);
             if (card == null)
             {
-                _logger.LogError("[CardsController] Edit() failed, error message {e}", "Card not found");
-                return BadRequest("Card not fouind for the CardID");
+                _logger.LogError("[DeckController] Deck not found when updating/editing in the DeckID {DeckID:0000", id);
+                return BadRequest("Deck not found for the DeckID");
             }
-         
-
             return View(card);
 
         }
@@ -97,13 +94,13 @@ namespace PowerCards.Controllers
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                
+
                 bool success = await _cardRepository.Edit(card);
                 // If the card was successfully edited, redirect to the deck details view
-                if (success )
+                if (success)
                 {
-                       return RedirectToAction("Details", "Decks", new { id = card.DeckID });
-                }               
+                    return RedirectToAction("Details", "Decks", new { id = card.DeckID });
+                }
             }
             _logger.LogError("[CardsController] Edit() failed, error message {e}", "Card not found");
             return BadRequest("Card not fouind for the CardID");

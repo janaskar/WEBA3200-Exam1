@@ -13,12 +13,7 @@ using Serilog.Events;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ??
         throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
-// Get the connection string
 
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");
-}
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -33,22 +28,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString);
 });
 
-// Add repositories
-builder.Services.AddScoped<IDeckRepository, DeckRepository>();
-builder.Services.AddScoped<ICardRepository, CardRepository>();
-builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
-
-// Add Serilog
-var loggerConfiguration = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
-
-loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
-                            e.Level == LogEventLevel.Information &&
-                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
-
-var logger = loggerConfiguration.CreateLogger();
-builder.Logging.AddSerilog(logger);
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -70,7 +49,10 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-
+// Add repositories
+builder.Services.AddScoped<IDeckRepository, DeckRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddRazorPages();
 builder.Services.AddSession(options =>
 {
@@ -78,6 +60,17 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromSeconds(86400); // 24h
     options.Cookie.IsEssential = true;
 });
+// Add Serilog
+var loggerConfiguration = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+
+loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
+                            e.Level == LogEventLevel.Information &&
+                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
+
+var logger = loggerConfiguration.CreateLogger();
+builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 

@@ -24,16 +24,13 @@ namespace PowerCards.Models
         [StringLength(500, ErrorMessage = "Description length cannot exceed 500 characters.")]
         public string? Description { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Subject is not valid.")]
+        [Required(ErrorMessage = "Subject is required.")]
         public Subject? Subject { get; set; }
 
-        [BindNever]
         public virtual User? User { get; set; }
 
-        [BindNever]
         public virtual List<Card>? Cards { get; set; }
 
-        [BindNever]
         public virtual List<Favorite>? Favorites { get; set; }
     }
 }

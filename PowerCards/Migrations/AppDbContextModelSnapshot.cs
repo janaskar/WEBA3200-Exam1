@@ -185,7 +185,7 @@ namespace PowerCards.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Subject")
+                    b.Property<int>("Subject")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

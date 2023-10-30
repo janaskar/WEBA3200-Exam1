@@ -10,7 +10,6 @@ namespace PowerCards.Models
         public int DeckID { get; set; }
 
         [Key]
-        [BindNever]
         public int CardID { get; set; }
 
         [Required(ErrorMessage = "Question is required.")]
@@ -20,8 +19,6 @@ namespace PowerCards.Models
         [Required(ErrorMessage = "Answer is required.")]
         [StringLength(1000, ErrorMessage = "Answer length cannot exceed 1000 characters.")]
         public string? Answer { get; set; }
-
-        [BindNever]
         public virtual Deck? Deck { get; set; }
     }
 }

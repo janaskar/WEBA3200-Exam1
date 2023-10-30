@@ -12,9 +12,7 @@ namespace PowerCards.Models
         [Key, Column(Order = 1)]
         [ForeignKey("Deck")]
         public int DeckID { get; set; }
-        [BindNever]
         public virtual User? User { get; set; }
-        [BindNever]
         public virtual Deck? Deck { get; set; }
     }
 }

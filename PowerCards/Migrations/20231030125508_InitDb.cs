@@ -165,7 +165,7 @@ namespace PowerCards.Migrations
                     UserName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     Title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    Subject = table.Column<int>(type: "INTEGER", nullable: true)
+                    Subject = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

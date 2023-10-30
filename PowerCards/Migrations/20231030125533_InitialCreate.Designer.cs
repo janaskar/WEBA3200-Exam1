@@ -11,8 +11,8 @@ using PowerCards.DAL;
 namespace PowerCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231029193930_InitDb")]
-    partial class InitDb
+    [Migration("20231030125533_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,7 +188,7 @@ namespace PowerCards.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Subject")
+                    b.Property<int>("Subject")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

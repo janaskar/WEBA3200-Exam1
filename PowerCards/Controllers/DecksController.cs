@@ -87,12 +87,11 @@ namespace PowerCards.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var deck = await _deckRepository.GetById(id);
-            if(deck == null)
+            if (deck == null)
             {
-                _logger.LogError("[DeckController] Deck not found when updating/editing in the DeckID {DeckID:0000", id);
+                _logger.LogError("[DecksController] Deck not found for the DeckID {DeckID: 0000}", id);
                 return BadRequest("Deck not found for the DeckID");
             }
-            // Check if the current user is the owner of the deck
             var currUsername = User.Identity.Name;
             if (deck.UserName != currUsername)
             {
@@ -109,27 +108,19 @@ namespace PowerCards.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(Deck deck)
         {
-
             if (ModelState.IsValid)
             {
-                bool success = await _deckRepository.Edit(deck);
-                // If the deck was successfully edited, redirect to the deck details view
-                if (success)
+                bool Success = await _deckRepository.Edit(deck);
+                if (Success)
+                {
                     return RedirectToAction(nameof(Index));
-            } 
-            // If the model state is not valid, return to the deck details view
-            _logger.LogWarning("[DecksController] Failed to edit deck with DeckID: {DeckID}", deck.DeckID);
-            // Check if the current user is the owner of the deck
-            var currUsername = User.Identity.Name;
-            if (deck.UserName != currUsername)
-            {
-                // If not, return unauthorized
-                return Unauthorized("You are not the owner");
-            }
-            return View(deck);
-        
+                }
 
+            }
+            _logger.LogWarning("[DecksController] Failed to edit deck with DeckID: {DeckID}", deck.DeckID);
+            return View(deck);
         }
+
 
         [HttpGet]
         [Authorize]
