@@ -157,7 +157,7 @@ namespace PowerCards.Migrations
 
                     b.Property<string>("Answer")
                         .IsRequired()
-                        .HasMaxLength(1000)
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DeckID")
@@ -182,7 +182,7 @@ namespace PowerCards.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(500)
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Subject")
@@ -190,11 +190,10 @@ namespace PowerCards.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("DeckID");

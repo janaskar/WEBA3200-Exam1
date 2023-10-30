@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PowerCards.Models
 {
@@ -17,7 +16,7 @@ namespace PowerCards.Models
         public string? Question { get; set; }
 
         [Required(ErrorMessage = "Answer is required.")]
-        [StringLength(1000, ErrorMessage = "Answer length cannot exceed 1000 characters.")]
+        [StringLength(250, ErrorMessage = "Answer length cannot exceed 250 characters.")]
         public string? Answer { get; set; }
         public virtual Deck? Deck { get; set; }
     }

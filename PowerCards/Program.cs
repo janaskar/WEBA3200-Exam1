@@ -1,14 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using PowerCards.DAL;
-using System;
 using Microsoft.AspNetCore.Identity;
-using PowerCards.Models;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.DependencyInjection;
+using Serilog.Events;
 using Serilog;
+using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
 using PowerCards.DAL.Repositories;
-using Serilog.Events;
+using PowerCards.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ??
