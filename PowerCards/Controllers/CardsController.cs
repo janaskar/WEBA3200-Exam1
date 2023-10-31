@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
 using PowerCards.DAL.Repositories;
@@ -6,6 +7,7 @@ using PowerCards.Models;
 
 namespace PowerCards.Controllers
 {
+    [Authorize]
     public class CardsController : Controller
     {
         // Dependency injection of the Card Repository
@@ -21,7 +23,6 @@ namespace PowerCards.Controllers
 
         // POST: Card Create from Deck details view
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateFromDeckDetails(Card card)
         {
             // Check if the model state is valid
@@ -58,7 +59,6 @@ namespace PowerCards.Controllers
 
         // GET: Card Edit
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var card = await _cardRepository.GetById(id);
@@ -73,7 +73,6 @@ namespace PowerCards.Controllers
 
         // POST: Card Edit
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Edit(Card card)
         {
             // Check if the model state is valid
@@ -108,7 +107,6 @@ namespace PowerCards.Controllers
 
         // POST: Card Delete
         [HttpPost, ActionName("Delete")]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Retrieve the card to be deleted

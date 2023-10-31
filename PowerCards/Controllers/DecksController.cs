@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
 using PowerCards.ViewModels;
 using PowerCards.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace PowerCards.Controllers
 {
+    // add the Authorize attribute to the class with loginpath to be /identity/account/login
+    [Authorize]
     public class DecksController : Controller
     {
         private readonly IDeckRepository _deckRepository;
@@ -17,6 +20,7 @@ namespace PowerCards.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             // Get all decks
@@ -32,6 +36,7 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             // Check if the deck exists
@@ -54,14 +59,12 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(Deck deck)
         {
             // Check if the model state is valid
@@ -79,7 +82,6 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             // Check if the deck exists
@@ -94,7 +96,6 @@ namespace PowerCards.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Edit(Deck deck)
         {
             // Check if the model state is valid
@@ -125,7 +126,6 @@ namespace PowerCards.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var deck = await _deckRepository.GetById(id);
@@ -140,7 +140,6 @@ namespace PowerCards.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed()
         {
             // Get the deck id from the route
