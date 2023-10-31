@@ -21,19 +21,27 @@ namespace PowerCards.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchQuery)
         {
             // Get all decks
             var decks = await _deckRepository.GetAll();
+
             // If the list is empty, return not found
-            if(decks == null)
+            if (decks == null)
             {
                 _logger.LogError("[DeckController] Item list not found while executing _deckRepository.GetAll()");
                 return NotFound("Cannot find Decks");
             }
-            // Get the current user
+
+            // If a search query is provided, filter the decks based on the 'titel' and 'desciption' fields
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                decks = await _deckRepository.Search(searchQuery);
+            }
+
             return View(decks);
         }
+
 
         [HttpGet]
         [AllowAnonymous]

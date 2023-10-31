@@ -14,6 +14,20 @@ namespace PowerCards.DAL.Repositories
             _logger = logger;
         }
 
+        public async Task<IEnumerable<Deck>?> Search(string searchQuery)
+        {
+            try
+            {
+                //return all decks from the database that contain the search query in their title or description
+                return await _db.Decks.Where(d => d.Title.Contains(searchQuery) || d.Description.Contains(searchQuery)).ToListAsync();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("[DeckRepository] Search() failed, error message: {e},", e.Message);
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<Deck>?> GetAll()
         {
             try
