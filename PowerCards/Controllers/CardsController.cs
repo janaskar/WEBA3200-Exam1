@@ -11,14 +11,12 @@ namespace PowerCards.Controllers
         // Dependency injection of the Card Repository
         private readonly ICardRepository _cardRepository;
         private readonly ILogger<CardsController> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         // Constructor to initialize repository
-        public CardsController(ICardRepository cardRepository, ILogger<CardsController> logger, IHttpContextAccessor httpContextAccessor)
+        public CardsController(ICardRepository cardRepository, ILogger<CardsController> logger)
         {
             _cardRepository = cardRepository;
             _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         // POST: Card Create from Deck details view
@@ -35,7 +33,7 @@ namespace PowerCards.Controllers
 
                 // Get the username of the deck and check if it matches the current user
                 string username = await _cardRepository.GetUserNameByDeckId(deckid);
-                if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+                if (username != User.Identity.Name)
                 {
                     _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", "User is not authorized to create this card");
                     return BadRequest("User is not authorized to create this card");
@@ -87,7 +85,7 @@ namespace PowerCards.Controllers
                 // Get the username of the deck and check if it matches the current user
                 var CardEdit = await _cardRepository.GetById(id);
                 string username = await _cardRepository.GetUserNameByDeckId(CardEdit.DeckID);
-                if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+                if (username != User.Identity.Name)
                 {
                     _logger.LogError("[CardsController] Edit() failed, error message {e}", "User is not authorized to edit this card");
                     return BadRequest("User is not authorized to edit this card");
@@ -129,7 +127,7 @@ namespace PowerCards.Controllers
 
             // Get the username of the deck and check if it matches the current user
             string username = await _cardRepository.GetUserNameByDeckId(deckid);
-            if (username != _httpContextAccessor.HttpContext.User.Identity.Name)
+            if (username != User.Identity.Name)
             {
                 _logger.LogError("[CardsController] CreateFromDeckDetails() failed, error message {e}", "User is not authorized to create this card");
                 return BadRequest("User is not authorized to create this card");

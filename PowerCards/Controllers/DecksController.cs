@@ -10,13 +10,11 @@ namespace PowerCards.Controllers
     {
         private readonly IDeckRepository _deckRepository;
         private readonly ILogger<DecksController> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DecksController(IDeckRepository deckRepository, ILogger<DecksController> logger, IHttpContextAccessor httpContextAccessor)
+        public DecksController(IDeckRepository deckRepository, ILogger<DecksController> logger)
         {
             _deckRepository = deckRepository;
             _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -70,7 +68,7 @@ namespace PowerCards.Controllers
             if (ModelState.IsValid)
             {
                 // Create the deck
-                deck.UserName = _httpContextAccessor.HttpContext.User.Identity.Name;
+                deck.UserName = User.Identity.Name;
                 bool success = await _deckRepository.Create(deck);
 
                 // Redirect to the deck index page
@@ -107,7 +105,7 @@ namespace PowerCards.Controllers
                 var DeckEdit = await _deckRepository.GetById(id);
 
                 // Check if the current user is the owner of the deck
-                if (DeckEdit.UserName != _httpContextAccessor.HttpContext.User.Identity.Name)
+                if (DeckEdit.UserName != User.Identity.Name)
                 {
                     _logger.LogError("[DecksController] This Deck does not belong to the current user");
                     return BadRequest("Deck does not belong to the current user");
@@ -157,7 +155,7 @@ namespace PowerCards.Controllers
             }
 
             // Check if the current user is the owner of the deck
-            if (DeckDelete.UserName != _httpContextAccessor.HttpContext.User.Identity.Name)
+            if (DeckDelete.UserName != User.Identity.Name)
             {
                 _logger.LogError("[DecksController] This Deck does not belong to the current user");
                 return BadRequest("Deck does not belong to the current user");

@@ -10,15 +10,11 @@ namespace PowerCards.Controllers
     {
         // Dependency injection of the Favorite Repository
         private readonly IFavoriteRepository _favoriteRepository;
-        private readonly SignInManager<User> _signInManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         // Constructor to initialize repository
-        public FavoritesController(IFavoriteRepository favoriteRepository, SignInManager<User> signInManager, IHttpContextAccessor httpContextAccessor)
+        public FavoritesController(IFavoriteRepository favoriteRepository)
         {
             _favoriteRepository = favoriteRepository;
-            _signInManager = signInManager;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         // POST: Favorites Create
@@ -31,7 +27,7 @@ namespace PowerCards.Controllers
             var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
 
             // Get the username of current user
-            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
+            var username = User.Identity.Name;
 
             var favorite = new Favorite
             {
