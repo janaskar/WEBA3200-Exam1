@@ -22,7 +22,7 @@ namespace PowerCards.DAL.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card ToListAsync() failed when GetAll(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card ToListAsync() failed when GetAll(), error message {e}", e.Message);
                 return new List<Card>();
             }
            
@@ -36,7 +36,7 @@ namespace PowerCards.DAL.Repositories
            }
            catch (Exception e)
            {
-                _logger.LogError("[ItemReposository] Card FindAsync() failed when GetById(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card FindAsync() failed when GetById(), error message {e}", e.Message);
                 return null;
            }
         }
@@ -45,11 +45,11 @@ namespace PowerCards.DAL.Repositories
             try
             {
                 var deck = await _db.Decks.FindAsync(id);
-                return deck.UserName;
+                return deck?.UserName ?? "";
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card Add() failed when Create(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card Add() failed when Create(), error message {e}", e.Message);
                 return "not found";
             }
         }
@@ -65,7 +65,7 @@ namespace PowerCards.DAL.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card Add() failed when Create(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card Add() failed when Create(), error message {e}", e.Message);
                 return false;
             }
         }
@@ -80,7 +80,7 @@ namespace PowerCards.DAL.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card Update() failed when Edit(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card Update() failed when Edit(), error message {e}", e.Message);
                 return false;
             }
         }
@@ -92,7 +92,7 @@ namespace PowerCards.DAL.Repositories
                 var card = await _db.Cards.FindAsync(id);
                 if (card == null)
                 {
-                    _logger.LogError("[ItemReposository] Card FindAsync() failed when Delete(), error message {e}", "Card not found");
+                    _logger.LogError("[CardReposository] Card FindAsync() failed when Delete(), error message {e}", "Card not found");
                     return false;
                 }
                 //remove the card
@@ -102,7 +102,7 @@ namespace PowerCards.DAL.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError("[ItemReposository] Card Remove() failed when Delete(), error message {e}", e.Message);
+                _logger.LogError("[CardReposository] Card Remove() failed when Delete(), error message {e}", e.Message);
                 return false;
             }
         }

@@ -1,9 +1,9 @@
 ﻿@inject UserManager<User> UserManager
 @inject SignInManager<User> SignInManager
-
 @{
     ViewData["Title"] = "Home Page";
 }
+
 <section class="bg-dark text-white">
     <article id="home" class="bg-dark text-white">
         <div class="container-fluid p-0">
@@ -59,14 +59,7 @@
                         You can also view other users' decks and add them to your favourites.
 
                     </p>
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <a class="nav-link btn btn-primary text-white" asp-area="" asp-controller="Decks" asp-action="Index">Create New Deck</a>
-                    }
-                    else
-                    {
-                        <a class="nav-link btn btn-primary text-white" id="login" asp-area="Identity" asp-page="/Account/Login">Create New Deck</a>
-                    }
+                    <a class="nav-link btn btn-primary text-white" asp-area="" asp-controller="Decks" asp-action="Create">Create New Deck</a>
                 </div>
                 <div class="col d-flex flex-column align-items-center justify-content-center">
                     <img src="~/image/flashcard.jpg" class="img-fluid p-3" alt="A photo of a flashcard" style="height: 70%">

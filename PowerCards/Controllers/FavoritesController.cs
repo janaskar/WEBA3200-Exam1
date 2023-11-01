@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
 using PowerCards.Models;
 
 namespace PowerCards.Controllers
 {
+    [Authorize]
     public class FavoritesController : Controller
     {
         // Dependency injection of the Favorite Repository
@@ -19,7 +19,6 @@ namespace PowerCards.Controllers
 
         // POST: Favorites Create
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Favorite()
         {
             // Get the deck id from referer
@@ -27,7 +26,7 @@ namespace PowerCards.Controllers
             var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
 
             // Get the username of current user
-            var username = User.Identity.Name;
+            var username = User.Identity?.Name;
 
             var favorite = new Favorite
             {
@@ -36,7 +35,7 @@ namespace PowerCards.Controllers
             };
 
             // Check if the favorite already exists
-            var existingFavorite = await _favoriteRepository.GetByCompositeId(favorite.UserName, favorite.DeckID);
+            var existingFavorite = await _favoriteRepository.GetByCompositeId(favorite.UserName ?? "", favorite.DeckID);
 
             // If the favorite does not exist, create it
             if (existingFavorite == null)
@@ -46,7 +45,7 @@ namespace PowerCards.Controllers
             }
             else
             {
-                await _favoriteRepository.DeleteConfirmed(favorite.UserName, favorite.DeckID);
+                await _favoriteRepository.DeleteConfirmed(favorite.UserName ?? "", favorite.DeckID);
             }
             return RedirectToAction("Details", "Decks", new { id = deckid });
         }

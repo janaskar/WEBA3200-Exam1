@@ -6,7 +6,6 @@ using PowerCards.Models;
 using PowerCards.DAL.Interfaces;
 using PowerCards.DAL.Repositories;
 using PowerCards.DAL;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ??
@@ -26,7 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString);
 });
 
-// Add Identity
+
+// Identity configuration
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     // Password settings
@@ -41,24 +41,26 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
     // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(1);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 })
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
-// Add authorization
-builder.Services.AddRazorPages();
-builder.Services.AddMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.Cookie.Name = ".AdventureWorks.Session";
-    options.IdleTimeout = TimeSpan.FromSeconds(86400); // 24h
-    options.Cookie.IsEssential = true;
+builder.Services.AddSession();
+
+// Configure the cookie options with a custom name
+builder.Services.ConfigureApplicationCookie(options => {
+    options.Cookie.Name = "power.cookie";
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
 });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-       .AddCookie();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddRazorPages();
 
 // Add repositories
 builder.Services.AddScoped<IDeckRepository, DeckRepository>();
@@ -71,8 +73,8 @@ var loggerConfiguration = new LoggerConfiguration()
     .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log");
 
 loggerConfiguration.Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
-                            e.Level == LogEventLevel.Information &&
-                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
+                                            e.Level == LogEventLevel.Information &&
+                                            e.MessageTemplate.Text.Contains("Executed DbCommand"));
 
 var logger = loggerConfiguration.CreateLogger();
 builder.Logging.AddSerilog(logger);

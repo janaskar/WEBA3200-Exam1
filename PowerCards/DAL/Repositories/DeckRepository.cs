@@ -19,7 +19,9 @@ namespace PowerCards.DAL.Repositories
             try
             {
                 //return all decks from the database that contain the search query in their title or description
+                #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 return await _db.Decks.Where(d => d.Title.Contains(searchQuery) || d.Description.Contains(searchQuery)).ToListAsync();
+                #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
             catch(Exception e)
             {
