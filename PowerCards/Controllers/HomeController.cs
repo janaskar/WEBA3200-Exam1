@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PowerCards.Models;
+using PowerCards.ViewModels;
 using System.Diagnostics;
 
 namespace PowerCards.Controllers

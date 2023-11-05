@@ -1,4 +1,4 @@
-namespace PowerCards.Models
+namespace PowerCards.ViewModels
 {
     public class ErrorViewModel
     {

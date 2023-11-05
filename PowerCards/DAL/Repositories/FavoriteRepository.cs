@@ -26,8 +26,8 @@ namespace PowerCards.DAL.Repositories
                 return null;
             }
         }
-      //Get by composite id
-      public async Task<Favorite?> GetByCompositeId(string UserName, int DeckID)
+        //Get by composite id
+        public async Task<Favorite?> GetByCompositeId(string UserName, int DeckID)
         {
             try
             {
@@ -41,8 +41,7 @@ namespace PowerCards.DAL.Repositories
             }
         }  
         public async Task<bool> Create(Favorite favorite)
-        {
-           
+        { 
             try
             {
                 //add the favorite

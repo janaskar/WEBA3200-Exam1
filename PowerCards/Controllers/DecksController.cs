@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
-using PowerCards.ViewModels;
+using PowerCards.ViewModels.Decks;
 using PowerCards.Models;
+using PowerCards.ViewModels.Cards;
 
 namespace PowerCards.Controllers
 {
@@ -39,12 +40,18 @@ namespace PowerCards.Controllers
             {
                 decks = await _deckRepository.Search(searchQuery);
             }
-            return View(decks);
+
+            // Create a new deck view model
+            var indexDeckViewModel = new IndexDeckViewModel
+            {
+                Decks = decks?.ToList() ?? new List<Deck>()
+            };
+            return View(indexDeckViewModel);
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string? question, string? answer, bool check)
         {
             // Check if the deck exists
             var deck = await _deckRepository.GetById(id);
@@ -55,15 +62,21 @@ namespace PowerCards.Controllers
                 return NotFound();
             }
 
-            // Get the cards of the deck
-            var viewModel = new DeckViewModel
+            // Create a new deck view model
+            var detailsDeckViewModel = new DetailsDeckViewModel
             {
-                // Get the cards of the deck
-                Deck = deck,
-                // Create a new card
-                Card = new Card() { DeckID = deck.DeckID }
+                DeckID = deck?.DeckID ?? 0,
+                UserName = deck?.UserName ?? "",
+                Title = deck?.Title ?? "",
+                Description = deck?.Description,
+                Subject = deck?.Subject,
+                Cards = deck?.Cards,
+                Favorites = deck?.Favorites,
+                Question = question,
+                Answer = answer,
+                Check = check
             };
-            return View(viewModel);
+            return View(detailsDeckViewModel);
         }
 
         [HttpGet]
@@ -73,20 +86,26 @@ namespace PowerCards.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Deck deck)
+        public async Task<IActionResult> Create(CreateDeckViewModel createDeckViewModel)
         {
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
                 // Create the deck
-                deck.UserName = CurrentUserName;
+                var deck = new Deck
+                {
+                    UserName = CurrentUserName,
+                    Title = createDeckViewModel.Title,
+                    Description = createDeckViewModel.Description,
+                    Subject = createDeckViewModel.Subject
+                };
                 bool success = await _deckRepository.Create(deck);
 
                 // Redirect to the deck index page
                 if (success)
                     return RedirectToAction(nameof(Index));
             }
-            return View(deck);
+            return View(createDeckViewModel);
         }
 
         [HttpGet]
@@ -104,15 +123,23 @@ namespace PowerCards.Controllers
             // Check if the current user is the owner of the deck
             if (deck?.UserName != CurrentUserName)
             {
-                _logger.LogError("[DecksController] This Deck does not belong to the current user");
                 _logger.LogError("Deck Edit() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, id);
                 return Forbid();
             }
-            return View(deck);
+
+            // Create a new deck view model
+            var editDeckViewModel = new EditDeckViewModel
+            {
+                DeckID = deck?.DeckID ?? 0,
+                Title = deck?.Title ?? "",
+                Description = deck?.Description,
+                Subject = deck?.Subject
+            };
+            return View(editDeckViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Deck deck)
+        public async Task<IActionResult> Edit(EditDeckViewModel editDeckViewModel)
         {
             // Check if the model state is valid
             if (ModelState.IsValid)
@@ -136,16 +163,16 @@ namespace PowerCards.Controllers
                 }
 
                 // Update the deck
-                DeckEdit.Title = deck.Title;
-                DeckEdit.Description = deck.Description;
-                DeckEdit.Subject = deck.Subject;
+                DeckEdit.Title = editDeckViewModel.Title;
+                DeckEdit.Description = editDeckViewModel.Description;
+                DeckEdit.Subject = editDeckViewModel.Subject;
                 bool success = await _deckRepository.Edit(DeckEdit);
 
                 // Redirect to the deck index page
                 if (success)
                     return RedirectToAction("Details", new { id = DeckEdit.DeckID });
             }
-            return View(deck);
+            return View(editDeckViewModel);
         }
 
         [HttpGet]
@@ -165,7 +192,13 @@ namespace PowerCards.Controllers
                 _logger.LogError("Deck Delete() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, id);
                 return Forbid();
             }
-            return View(deck);
+
+            // Create a new deck view model
+            var deleteDeckViewModel = new DeleteDeckViewModel
+            {
+                Title = deck?.Title ?? ""
+            };
+            return View(deleteDeckViewModel);
         }
 
         [HttpPost, ActionName("Delete")]

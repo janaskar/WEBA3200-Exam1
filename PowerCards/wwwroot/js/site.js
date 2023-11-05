@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-
-
-//This code is used for hiding and showing the answer
-$(document).ready(function () {
+﻿$(document).ready(function () {
     // Initially, hide all answers
     $('.answer').hide();
 
@@ -35,6 +31,14 @@ $(document).ready(function () {
             $(this).text('Show Answer');
         }
     });
+
+    // Make an AJAX request to your controller action
+    $(document).ready(function () {
+        var url = $('#partial-view-container').data('url');
+
+        // Make an AJAX request to the URL
+        $.get(url, function (data) {
+            $('#partial-view-container').html(data);
+        });
+    });
 });
-
-

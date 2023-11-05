@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PowerCards.DAL.Interfaces;
+using PowerCards.ViewModels.Cards;
 using PowerCards.Models;
 
 namespace PowerCards.Controllers
@@ -20,28 +21,45 @@ namespace PowerCards.Controllers
         // Get username of the current user
         public string? CurrentUserName => User.Identity?.Name;
 
+        public PartialViewResult CreateCardPartialView(int deckId, string? question, string? answer, bool check, string q)
+        {
+            // Create a new card view model
+            var createCardViewModel = new CreateCardViewModel
+            {
+                DeckID = deckId,
+                Question = question,
+                Answer = answer,
+            };
+
+            // If check is true enable modelvalidation
+            if (check)
+            {
+                if (createCardViewModel.Question == null)
+                    ModelState.AddModelError("Question", "Question is required");
+                if (createCardViewModel.Answer == null)
+                    ModelState.AddModelError("Answer", "Answer is required");
+            }
+            return PartialView("_Create", createCardViewModel);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Create(Card card)
+        public async Task<IActionResult> Create(int deckId, Card card)
         {
             // Check if the model state is valid
             if (ModelState.IsValid)
             {
-                // Get the deck id from referer
-                var referer = Request.Headers["Referer"].ToString();
-                var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
-
                 // Get the username of the deck and check if it matches the current user
-                string username = await _cardRepository.GetUserNameByDeckId(deckid);
+                string username = await _cardRepository.GetUserNameByDeckId(deckId);
                 if (username != CurrentUserName)
                 {
-                    _logger.LogError("Card Create() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, deckid);
+                    _logger.LogError("Card Create() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, deckId);
                     return Forbid();
                 }
 
                 // Create a new card
                 var CardCreate = new Card
                 {
-                    DeckID = deckid,
+                    DeckID = deckId,
                     Question = card.Question,
                     Answer = card.Answer
                 };
@@ -49,9 +67,9 @@ namespace PowerCards.Controllers
 
                 // Redirect to the deck details page
                 if (success)
-                    return RedirectToAction("Details", "Decks", new { id = deckid });
+                    return RedirectToAction("Details", "Decks", new { id = deckId });
             }
-            return View(card);
+            return RedirectToAction("Details", "Decks", new { id = deckId, question = card?.Question, answer = card?.Answer, check = true });
         }
 
         [HttpGet]
@@ -72,11 +90,19 @@ namespace PowerCards.Controllers
                 _logger.LogError("Card Edit() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, card.DeckID);
                 return Forbid();
             }
-            return View(card);
+
+            // Create a new card view model
+            var editCardViewModel = new EditCardViewModel
+            {
+                DeckID = card.DeckID,
+                Question = card.Question,
+                Answer = card.Answer
+            };
+            return View(editCardViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Card card)
+        public async Task<IActionResult> Edit(EditCardViewModel editCardViewModel)
         {
             // Check if the model state is valid
             if (ModelState.IsValid)
@@ -101,20 +127,20 @@ namespace PowerCards.Controllers
                 }
 
                 // Update the card
-                CardEdit.Question = card.Question;
-                CardEdit.Answer = card.Answer;
+                CardEdit.Question = editCardViewModel.Question;
+                CardEdit.Answer = editCardViewModel.Answer;
                 bool success = await _cardRepository.Edit(CardEdit);
 
                 // Redirect to the deck details page
                 if (success)
                     return RedirectToAction("Details", "Decks", new { id = CardEdit.DeckID });
             }
-            return View(card);
+            return View(editCardViewModel);
         }
 
         // POST: Card Delete
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int deckId)
         {
             // Retrieve the card to be deleted
             var card = await _cardRepository.GetById(id);
@@ -126,15 +152,11 @@ namespace PowerCards.Controllers
                 return NotFound();
             }
 
-            // Get the deck id from referer
-            var referer = Request.Headers["Referer"].ToString();
-            var deckid = Convert.ToInt32(referer.Substring(referer.LastIndexOf('/') + 1));
-
             // Get the username of the deck and check if it matches the current user
-            string username = await _cardRepository.GetUserNameByDeckId(deckid);
+            string username = await _cardRepository.GetUserNameByDeckId(deckId);
             if (username != CurrentUserName)
             {
-                _logger.LogError("Card Delete() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, deckid);
+                _logger.LogError("Card Delete() does not belong to UserName:{UserName:} DeckID:{DeckID:}", CurrentUserName, deckId);
                 return Forbid();
             }
 
@@ -143,7 +165,7 @@ namespace PowerCards.Controllers
 
             // Redirect to the deck details page
             if (success)
-                return RedirectToAction("Details", "Decks", new { id = deckid });
+                return RedirectToAction("Details", "Decks", new { id = deckId });
 
             _logger.LogError("Card DeleteConfirmed() could not delete CardID:{CardID:0000}", id);
             return Conflict();

@@ -1,4 +1,4 @@
-﻿@model PowerCards.ViewModels.DeckViewModel;
+﻿@model DetailsDeckViewModel;
 @inject UserManager<User> UserManager
 @inject SignInManager<User> SignInManager;
 @{
@@ -7,14 +7,14 @@
 
 <section class="p-5">
     <div class="mb-3">
-        <h1>Created by: @Html.DisplayFor(model => model.Deck.UserName)</h1>
+        <h1>Created by: @@@Html.DisplayFor(model => model.UserName)</h1>
     </div>
     <hr />
     <div class="p-2 d-flex justify-content-between">
         <div>
-            <h1>@Html.DisplayFor(model => model.Deck.Title)</h1>
-            <p><strong><small>@Html.DisplayFor(model => model.Deck.Subject)</small></strong></p>
-            <p><small>@Html.DisplayFor(model => model.Deck.Description)</small></p>
+            <h1>@Html.DisplayFor(model => model.Title)</h1>
+            <p><strong><small>@Html.DisplayFor(model => model.Subject)</small></strong></p>
+            <p><small>@Html.DisplayFor(model => model.Description)</small></p>
         </div>
 
         <div class="align-self-center">
@@ -22,7 +22,7 @@
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <form method="post" asp-controller="Favorites" asp-action="Favorite">
-                        @if (Model.Deck.Favorites.Any(favorite => favorite.UserName == UserManager.GetUserName(User) && favorite.DeckID == Model.Deck.DeckID))
+                        @if (Model.Favorites.Any(favorite => favorite.UserName == UserManager.GetUserName(User) && favorite.DeckID == Model.DeckID))
                         {
                             <button type="submit" class="btn btn-warning"><i class="bi bi-star-fill">Favourite</i></button>
                         }
@@ -41,11 +41,11 @@
             Cards in this Deck
         </div>
         <div class="card-body">
-            @if (Model.Deck.Cards.Any())
+            @if (Model.Cards.Any())
             {
-                foreach (var card in Model.Deck.Cards)
+                foreach (var card in Model.Cards)
                 {
-                    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+                    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.UserName)
                     {
                         <div class="row mb-4 w-100 d-flex justify-content-between row align-content-center">
                             <!-- Question Card -->
@@ -74,6 +74,7 @@
                                 <a asp-controller="Cards" asp-action="Edit" asp-route-id="@card.CardID" class="btn btn-primary my-2 min-"><i class="bi bi-pen">Edit</i></a>
                                 <form class="p-0 my-2" method="post" asp-controller="Cards" asp-action="Delete">
                                     <input type="hidden" name="id" value="@card.CardID" />
+                                    <input type="hidden" name="deckId" value="@Model.DeckID" />
                                     <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash">Delete</i></button>
                                 </form>
                             </div>
@@ -115,38 +116,23 @@
     </div>
     <!-- Cards Display end-->
 
-    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.Deck.UserName)
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserName(User) == Model.UserName)
     {
-    <!-- Begin Card Creation Form -->
+        <!-- Begin Card Creation Form -->
         <div class="card mt-4">
             <div class="card-header">
                 Add a New Card
             </div>
-            <div class="card-body">
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <form asp-controller="Cards" asp-action="Create" method="post">
-                    <div class="form-group">
-                        <label asp-for="Card.Question">Question</label>
-                        <input asp-for="Card.Question" class="form-control" />
-                        <span asp-validation-for="Card.Question" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Card.Answer">Answer</label>
-                        <input asp-for="Card.Answer" class="form-control" />
-                        <span asp-validation-for="Card.Answer" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mt-3">
-                        <button type="submit" class="btn btn-primary">Add Card</button>
-                    </div>
-                </form>
+            <!-- Display the card creation form from card controller-->
+            <div class="card-body" id="partial-view-container" data-url="@Url.Action("CreateCardPartialView", "Cards", new { deckId = Model.DeckID, question = Model.Question, answer = Model.Answer, check = Model.Check })">
             </div>
         </div>
         <!-- End Card Creation Form -->
         <div class="d-flex justify-content-between pt-3">
             <a asp-action="Index" class="btn btn-success">Back to List</a>
             <div>
-                <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.Deck.DeckID" class="btn btn-primary mx-3">Edit Deck</a>
-                <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.Deck.DeckID" class="btn btn-danger">Delete Deck</a>
+                <a asp-controller="Decks" asp-action="Edit" asp-route-id="@Model.DeckID" class="btn btn-primary mx-3">Edit Deck</a>
+                <a asp-controller="Decks" asp-action="Delete" asp-route-id="@Model.DeckID" class="btn btn-danger">Delete Deck</a>
             </div>
         </div>
     }
